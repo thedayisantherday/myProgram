@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_surface_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.zxg.myprogram.activities.SurfaceViewActivity">
+
+    <com.example.zxg.myprogram.widget.CustomViewGroup
+        android:id="@+id/test_custom_viewgroup"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:background="#3ff0">
+
+        <com.example.zxg.myprogram.widget.CustomView
+            android:id="@+id/test_custom_view"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="#3f0f" />
+
+    </com.example.zxg.myprogram.widget.CustomViewGroup>
+</LinearLayout>

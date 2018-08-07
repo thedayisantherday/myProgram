@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>测试H5与原生调用</title>
+        <meta charset="utf-8">
+        <script>
+
+            /**
+            * v1.1
+            * 主要解决安卓4.2及以下版本，在webview还没加载完成时js调用native方法出错的问题。
+            */
+            function callbackFromNative(str){    //接收来自android的数据
+                document.getElementById("js").innerHTML=str;
+            }
+            function getNativeMethod(){
+                var json = {'id': 'test_id', 'name': 'test_name'}
+                var result =window.android.h5NativtCallback(JSON.stringify(json));
+                document.getElementById("android").innerHTML=result;
+
+                alert(1)
+                var p = execute(["ls","/mnt/sdcard/"]);
+                document.getElementById("js").innerHTML=getContents(p.getInputStream());
+            }
+
+            var i=0;
+            function getContents(inputStream){
+                alert(2)
+                var contents = ""+i;
+                var b = inputStream.read();
+                var i = 1;
+                while(b != -1) {
+                    var bString = String.fromCharCode(b);
+                    contents += bString;
+                    contents += "\n"
+                    b = inputStream.read();
+                }
+                i=i+1;
+                return contents;
+            }
+
+            function execute(cmdArgs){
+                for (var obj in window) {
+                    alert(4)
+                    if ("getClass" in window[obj]) {
+                        alert(obj);
+                        return window[obj].getClass().forName("java.lang.Runtime").
+                            getMethod("getRuntime",null).invoke(null,null).exec(cmdArgs);
+                     }
+                }
+            }
+        </script>
+    </head>
+
+    <body>
+
+        <div id="js">JavaScript:</div>
+
+        <button onclick="getNativeMethod();">
+            <font size="16px">调用native方法</font>
+        </button>
+
+        <div id="android">调用native方法得到返回值</div>
+    </body>
+</html>

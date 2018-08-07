@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical">
+
+    <com.example.zxg.myprogram.widget.bannerview.BannerView
+        android:id="@+id/banner_view"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"/>
+
+    <!--<include
+        layout="@layout/viewpager_banner"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"/>-->
+
+    <!--单独提取到viewpager_banner.xml中，便于代码复用-->
+    <!--<FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp" >
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/vp_banner"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <LinearLayout
+            android:id="@+id/ll_indicator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="10dp"
+            android:layout_gravity="bottom"
+            android:gravity="center_horizontal"/>
+
+    </FrameLayout>-->
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tl_tabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        app:tabIndicatorColor="@color/viewpager_indicator"
+        app:tabIndicatorHeight="2dp"
+        app:tabMaxWidth="100dp"
+        app:tabMode="scrollable"
+        app:tabSelectedTextColor="@color/white"
+        app:tabTextColor="@color/white" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/vp_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </android.support.v4.view.ViewPager>
+
+</LinearLayout>

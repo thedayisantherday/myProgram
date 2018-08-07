@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">MyProgram</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="str_sure">确定</string>
+    <string name="str_cancel">取消</string>
+    <string name="str_net_unusable">网络不可用，请设置网络</string>
+    <string name="str_net_abnormal">网络异常，请设置网络</string>
+</resources>

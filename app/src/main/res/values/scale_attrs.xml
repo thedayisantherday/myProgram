@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--刻度尺属性-->
+    <declare-styleable name="ZXGStyleable">
+        <!--最大刻度数-->
+        <attr name="max_num" format="integer"/>
+        <!--最小刻度数-->
+        <attr name="min_num" format="integer"/>
+        <!-- 初始值 -->
+        <attr name="default_value" format="integer"/>
+
+        <!-- 一个刻度代表的值 -->
+        <attr name="scale_value" format="integer"/>
+        <!-- 进制 -->
+        <attr name="system_scale" format="integer"/>
+
+        <!-- 两个刻度线之间的像素 -->
+        <attr name="scale_width" format="dimension"/>
+        <!-- 短刻度线的高度（像素） -->
+        <attr name="scale_height" format="dimension"/>
+    </declare-styleable>
+</resources>

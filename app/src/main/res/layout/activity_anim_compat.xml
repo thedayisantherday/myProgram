@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/gl_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_below="@+id/id_include"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+
+            android:orientation="vertical"
+            android:weightSum="1">
+
+            <EditText
+                android:id="@+id/et_code"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:transitionName="transition_tag"
+                android:textSize="15sp"
+                android:text="code"
+                android:textStyle="bold"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="0.26" />
+
+            <EditText
+                android:id="@+id/et_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:textSize="13sp"
+                android:text="message"/>
+
+            <EditText
+                android:id="@+id/et_body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:textSize="13sp"
+                android:text="body"/>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:id="@+id/bt_sure"
+                android:layout_marginBottom="20dp"
+                android:text="确定"
+                />
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>
+
+<!--&lt;!&ndash;<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--android:id="@+id/sv_anim_compat"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent">-->
+
+    <!--<GridLayout-->
+        <!--android:id="@+id/gl_root"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:columnCount="3">-->
+
+
+    <!--</GridLayout>-->
+
+<!--</ScrollView>&ndash;&gt;-->

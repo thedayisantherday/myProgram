@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.example.zxg.myprogram.widget.scalescrollview.ResizeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rl_scroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:id="@+id/et_horizontalScaleValue"
+        android:layout_centerHorizontal="true"
+        android:text="50"
+        android:textSize="24sp"
+        android:singleLine="true"
+        android:inputType="numberDecimal"
+        android:background="@null"/>
+
+    <ImageView
+        android:id="@+id/iv_point_up"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/et_horizontalScaleValue"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/icon_lin480"/>
+
+    <!--自定义刻度尺-->
+    <com.example.zxg.myprogram.widget.scalescrollview.HorizontalScaleView
+        android:id="@+id/horizontalScale"
+        android:layout_centerHorizontal="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/iv_point_up"
+        app:max_num="100"
+        app:min_num="0"
+        app:scale_height="10dp"
+        app:scale_width="20px"
+        app:system_scale="5"
+        app:scale_value="1000"
+        app:default_value="0"/>
+
+    <TextView
+        android:id="@+id/tv_point_line"
+        android:layout_width="1dp"
+        android:layout_height="80dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/iv_point_up"
+        android:background="#ffa800"/>
+
+    <ImageView
+        android:id="@+id/iv_point_down"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/tv_point_line"
+        android:src="@drawable/icon_croci480"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="add"
+        android:id="@+id/add"
+        android:layout_marginTop="81dp"
+        android:layout_below="@+id/horizontalScale"
+        android:layout_toLeftOf="@+id/et_horizontalScaleValue"
+        android:layout_toStartOf="@+id/et_horizontalScaleValue"
+        android:layout_marginRight="42dp"
+        android:layout_marginEnd="42dp"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="sub"
+        android:id="@+id/sub"
+        android:layout_alignTop="@+id/add"
+        android:layout_toRightOf="@+id/et_horizontalScaleValue"
+        android:layout_toEndOf="@+id/et_horizontalScaleValue"/>
+</com.example.zxg.myprogram.widget.scalescrollview.ResizeLayout>

@@ -89,6 +89,7 @@
         <activity android:name=".activities.WebviewActivity" />
         <activity android:name=".activities.SurfaceViewActivity"></activity>
         <activity android:name=".activities.TouchEventActivity" />
+        <activity android:name=".activities.MovableViewActivity" />
     </application>
 
 </manifest>

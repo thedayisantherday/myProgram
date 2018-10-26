@@ -63,6 +63,13 @@
                 android:layout_margin="10dp"
                 android:text="btn_moving_with_finger"/>
 
+            <Button
+                android:id="@+id/btn_tuple"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_margin="10dp"
+                android:text="方法返回不同对象"/>
+
         </LinearLayout>
 
         <LinearLayout
@@ -108,6 +115,13 @@
                 android:layout_height="50dp"
                 android:layout_margin="10dp"
                 android:text="事件分发"/>
+
+            <Button
+                android:id="@+id/btn_movable_view"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_margin="10dp"
+                android:text="MovableView"/>
         </LinearLayout>
     </LinearLayout>
 

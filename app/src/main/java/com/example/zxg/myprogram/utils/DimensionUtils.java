@@ -1,5 +1,6 @@
 package com.example.zxg.myprogram.utils;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.support.v4.widget.ScrollerCompat;
 import android.util.DisplayMetrics;
@@ -99,5 +100,13 @@ public class DimensionUtils {
      */
     public static int getHeightPixels(){
         return resources.getDisplayMetrics().heightPixels;
+    }
+
+    public static int getStatusBarHeight() {
+        int resourceId = resources.getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            return resources.getDimensionPixelSize(resourceId);
+        }
+        return 0;
     }
 }

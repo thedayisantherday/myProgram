@@ -2,16 +2,19 @@ package com.example.zxg.myprogram.activities;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.DrawerLayout;
-import android.text.method.Touch;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.example.zxg.myprogram.R;
 import com.example.zxg.myprogram.activities.activitycontrol.BaseActivity;
+import com.example.zxg.myprogram.common.ThreeTuple;
+import com.example.zxg.myprogram.common.TupleUtil;
 import com.example.zxg.myprogram.netapi.api.LoginApi;
 import com.example.zxg.myprogram.utils.AnimUtils;
 import com.example.zxg.myprogram.utils.LogUtils;
@@ -23,7 +26,10 @@ import com.example.zxg.myprogram.widget.dialogs.CustomDialog;
 import com.example.zxg.myprogram.widget.dialogs.PopupFromBottomDialog;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.PriorityQueue;
 
 import cn.sharesdk.OnekeyShareHelper;
 import cn.sharesdk.framework.ShareSDK;
@@ -36,8 +42,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
     private DrawerLayout dl_drawer;
     private LinearLayout ll_share;
     private Button btn_net, btn_scale, btn_viewpager, btn_test, btn_custom_dialog, btn_popup_dialog,
-            btn_moving_with_finger, btn_android_h5, btn_vertical_viewpager, btn_webview, btn_doubleSurfaceViewFlicker,
-            btn_touch_event;
+            btn_moving_with_finger, btn_tuple, btn_android_h5, btn_vertical_viewpager, btn_webview, btn_doubleSurfaceViewFlicker,
+            btn_touch_event, btn_movable_view;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +51,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         setView(R.layout.activity_main);
 
         mContext = this;
+        String str;
 
         btn_net = (Button) findViewById(R.id.btn_net);
         btn_net.setOnClickListener(this);
@@ -67,6 +74,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         btn_moving_with_finger = (Button) findViewById(R.id.btn_moving_with_finger);
         btn_moving_with_finger.setOnClickListener(this);
 
+        btn_tuple = (Button) findViewById(R.id.btn_tuple);
+        btn_tuple.setOnClickListener(this);
+
         btn_android_h5 = (Button)findViewById(R.id.btn_android_h5);
         btn_android_h5.setOnClickListener(this);
 
@@ -85,6 +95,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
 
         btn_touch_event = (Button) findViewById(R.id.btn_touch_event);
         btn_touch_event.setOnClickListener(this);
+
+        btn_movable_view = (Button) findViewById(R.id.btn_movable_view);
+        btn_movable_view.setOnClickListener(this);
     }
 
     @Override
@@ -115,9 +128,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
                 if (Tools.isEmpty(str)){
                     LogUtils.i(TAG, "str is empty");
                 }
-                LogUtils.i(TAG, "upperCaseFirstOne:"+Tools.upperCaseFirstOne("my -- test -test"));
-                LogUtils.i(TAG, "getCharCount:"+Tools.getCharCount("my -- -test"));
-                LogUtils.i(TAG, "---my test");*/
+                LogUtils.i(TAG, "upperCaseFirstOne:"+Tools.upperCaseFirstOne("my -- test1 -test1"));
+                LogUtils.i(TAG, "getCharCount:"+Tools.getCharCount("my -- -test1"));
+                LogUtils.i(TAG, "---my test1");*/
 
 //                List list = null;
 //                list.contains(2);
@@ -160,11 +173,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
                         v, v.getWidth(), v.getHeight(), 0, 0);
                 break;
             case R.id.btn_test:
-                AnimUtils.doScaleUpAnim((MainActivity)mContext, com.example.zxg.myprogram.test.MainActivity.class,
-                        v, v.getWidth(), v.getHeight(), 0, 0);
+                /*AnimUtils.doScaleUpAnim((MainActivity)mContext, com.example.zxg.myprogram.test1.MainActivity.class,
+                        v, v.getWidth(), v.getHeight(), 0, 0);*/
+                test1();
+                test2();
+                test3();
                 break;
             case R.id.btn_custom_dialog:
-                CustomDialog dialog = new CustomDialog(mContext, "test", "do test", "取消", "确定");
+                CustomDialog dialog = new CustomDialog(mContext, "test1", "do test1", "取消", "确定");
                 dialog.showDialog();
                 dialog.setClickCallBack(new CustomDialog.ClickCallBack() {
                     @Override
@@ -213,6 +229,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
                 AnimUtils.doCustomAnim((MainActivity)mContext,
                         MovingWithFingerActivity.class, R.anim.in_from_left, R.anim.out_to_right);
                 break;
+            case R.id.btn_tuple:
+                ThreeTuple<String, Integer, Boolean> threeTuple = TupleUtil.tuple("test1", 1, true);
+                Toast.makeText(mContext, "ThreeTuple.first = " + threeTuple.first + ", ThreeTuple.second = " + threeTuple.second + ", ThreeTuple.three = " + threeTuple.three, Toast.LENGTH_LONG).show();
+                break;
             case R.id.btn_vertical_viewpager:
                 AnimUtils.doCustomAnim((MainActivity)mContext,
                         VerticalViewpagerActivity.class, R.anim.in_from_left, R.anim.out_to_right);
@@ -228,6 +248,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
             case R.id.btn_touch_event:
                 AnimUtils.doCustomAnim((MainActivity)mContext,
                         TouchEventActivity.class, R.anim.in_from_left, R.anim.out_to_right);
+                break;
+            case R.id.btn_movable_view:
+                AnimUtils.doCustomAnim((MainActivity)mContext,
+                        MovableViewActivity.class, R.anim.in_from_left, R.anim.out_to_right);
                 break;
         }
     }
@@ -321,5 +345,106 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
             }
         }
         return new int[]{};
+    }
+
+    public static void test1() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("from", 1);
+        params.put("tagId", "tagId");
+        params.put("isPost", true);
+
+        for(String key : params.keySet()) {
+            LogUtils.i("test1", key + ": " + params.get(key));
+        }
+
+
+
+        String a = "hello2";
+        final String b = "hello";
+        String d = "hello";
+        String c = b + 2;
+        String e = d + 2;
+        LogUtils.i("String test1", "" + (a == c));
+        LogUtils.i("String test2", "" + (a == e));
+        LogUtils.i("String test3", "" + (("String" + 2) == a));
+        LogUtils.i("String test4", "" + ("hello2" == a));
+        LogUtils.i("String test5", "" + ((1+2) == 3));
+    }
+
+    public void test2() {
+        //临界资源
+        Service service = new Service();
+
+        //创建并启动线程A
+        ThreadA a = new ThreadA(service);
+        a.setName("A");
+        a.start();
+
+        //创建并启动线程B
+        ThreadB b = new ThreadB(service);
+        b.setName("B");
+        b.start();
+    }
+
+    //资源类
+    class Service {
+        public void print(String stringParam) {
+            try {
+                synchronized (stringParam) {
+                    System.out.println(stringParam.hashCode());
+                    System.out.println(Thread.currentThread().getName());
+                    Thread.sleep(1000);
+                    System.out.println(Thread.currentThread().getName());
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    //线程A
+    class ThreadA extends Thread {
+        private Service service;
+
+        public ThreadA(Service service) {
+            super();
+            this.service = service;
+        }
+
+        @Override
+        public void run() {
+            service.print("AA");
+        }
+    }
+
+    //线程B
+    class ThreadB extends Thread {
+        private Service service;
+
+        public ThreadB(Service service) {
+            super();
+            this.service = service;
+        }
+
+        @Override
+        public void run() {
+            service.print("AA");
+        }
+    }
+
+    private void test3() {
+        TodoList todoList = new TodoList();
+        todoList.remove();
+    }
+
+    class TodoList extends PriorityQueue<TodoItem> {
+
+    }
+
+    class TodoItem implements Comparable<TodoItem> {
+        @Override
+        public int compareTo(@NonNull TodoItem another) {
+            return 0;
+        }
     }
 }

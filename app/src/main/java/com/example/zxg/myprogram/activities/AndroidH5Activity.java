@@ -51,7 +51,7 @@ public class AndroidH5Activity extends BaseActivity {
         Button button = (Button) findViewById(R.id.btn_test);
         final JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("test", "1");
+            jsonObject.put("test1", "1");
             jsonObject.put("test_1", new TestJs());
         } catch (Exception e) {
             e.printStackTrace();

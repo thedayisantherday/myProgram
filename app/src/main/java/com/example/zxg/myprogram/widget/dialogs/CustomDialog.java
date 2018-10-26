@@ -123,7 +123,7 @@ public class CustomDialog {
                 TextView tv_negative = (TextView) window.findViewById(R.id.tv_negative);
                 //str_negative为空则按钮隐藏
                 if (TextUtils.isEmpty(str_negative)) {
-                    tv_positive.setVisibility(View.GONE);
+                    tv_negative.setVisibility(View.GONE);
                     view_split_line.setVisibility(View.GONE);
                 } else {
                     tv_negative.setText(str_negative);
@@ -173,4 +173,13 @@ public class CustomDialog {
         }
     }
 
+    /**
+     * dialog是否可见
+     */
+    public boolean isDialogVisible(){
+        if (mAlertDialog != null){
+            return mAlertDialog.isShowing();
+        }
+        return false;
+    }
 }

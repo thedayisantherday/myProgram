@@ -32,8 +32,14 @@ public class JsonUtils {
             if ("_id".equals(fieldName) || "$change".equals(fieldName)){
                 continue;
             }
-            Method method = clazz.getDeclaredMethod(
-                    "set" + Tools.upperCaseFirstOne(fieldName), field.getType());
+
+            Method method = null;
+            try {
+                method = clazz.getDeclaredMethod(
+                        "set" + Tools.upperCaseFirstOne(fieldName), field.getType());
+            } catch (Exception e) {
+                continue;
+            }
             Object arg = jsonObject.opt(fieldName);
             if (method != null && method.getName() != null){
                 if (arg != null && !arg.toString().equals("null")  && !Tools.isEmpty(arg.toString())){

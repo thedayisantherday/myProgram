@@ -35,6 +35,10 @@ public class InterceptTouchEventViewGroup extends LinearLayout {
         mContext = context;
     }
 
+    /**
+     * 前一事件return false，后一事件的传递路径和前一事件传递路径相同；
+     * 前一事件return true，后续所有事件将直接从dispatchTouchEvent分发给onTouchEvent处理，不在经过onInterceptTouchEvent方法。
+     */
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
         switch (event.getAction()){

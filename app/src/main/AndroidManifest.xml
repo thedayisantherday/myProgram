@@ -87,9 +87,13 @@
         <activity android:name=".activities.MovingWithFingerActivity" />
         <activity android:name=".activities.AndroidH5Activity" />
         <activity android:name=".activities.WebviewActivity" />
-        <activity android:name=".activities.SurfaceViewActivity"></activity>
+        <activity android:name=".activities.SurfaceViewActivity" />
         <activity android:name=".activities.TouchEventActivity" />
         <activity android:name=".activities.MovableViewActivity" />
+        <activity
+            android:name=".activities.TestActivity"
+            android:label="@string/title_activity_test"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

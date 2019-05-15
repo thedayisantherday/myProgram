@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_test"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:maxLines="3"
+        android:text="test"/>
+
+    <com.example.zxg.myprogram.widget.ImageTextView
+        android:id="@+id/imageTextView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:topTVLines="1"
+        app:rightTVLines="2"
+        app:bottomTVLines="1"
+        app:leftTVVisibility="gone"
+        app:imgSrc="@drawable/icon_lin480"
+        app:text="从2017-2025年间ab，上海将规划建设9条线路cd，全长约285公里mn；而轨交崇明线则出现在规划中ji。这是记者今天wx（18日）y从《上海市轨道交通近期建设规划(2017-2025)》第二次环评公示中获得的信息。记者看到，此轮公示范围包括轨道交通19号线、20号线一期、21号线一期、23号线一期、1号线西延伸、13号线西延伸、嘉闵线、机场联络线、崇明线的9条线，全程约285公里。"/>
+
+</LinearLayout>

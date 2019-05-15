@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -18,6 +19,7 @@ import com.example.zxg.myprogram.common.TupleUtil;
 import com.example.zxg.myprogram.netapi.api.LoginApi;
 import com.example.zxg.myprogram.utils.AnimUtils;
 import com.example.zxg.myprogram.utils.LogUtils;
+import com.example.zxg.myprogram.utils.MurmurHash;
 import com.example.zxg.myprogram.utils.NetUtils;
 import com.example.zxg.myprogram.utils.SysUtils;
 import com.example.zxg.myprogram.utils.TimeUtils;
@@ -51,7 +53,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         setView(R.layout.activity_main);
 
         mContext = this;
-        String str;
 
         btn_net = (Button) findViewById(R.id.btn_net);
         btn_net.setOnClickListener(this);
@@ -175,9 +176,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
             case R.id.btn_test:
                 /*AnimUtils.doScaleUpAnim((MainActivity)mContext, com.example.zxg.myprogram.test1.MainActivity.class,
                         v, v.getWidth(), v.getHeight(), 0, 0);*/
-                test1();
-                test2();
-                test3();
+                /*AnimUtils.doScaleUpAnim((MainActivity)mContext, TestActivity.class,
+                        v, v.getWidth(), v.getHeight(), 0, 0);*/
+                Log.i("convert String", "onClick: 3 convertStr = " + convert("PAYPALISHIRING", 3));
+                Log.i("convert String", "onClick: 4 convertStr = " + convert("PAYPALISHIRING", 4));
                 break;
             case R.id.btn_custom_dialog:
                 CustomDialog dialog = new CustomDialog(mContext, "test1", "do test1", "取消", "确定");
@@ -300,151 +302,35 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         chars[index] = temp;
     }
 
-    /**
-     * 找出数组中最大差值
-     * @param list
-     * @return
-     */
-    private int getMax (int[] list) {
-        if (list.length < 2) {
-            return 0;
+    public String convert(String s, int numRows) {
+        if (s == null || numRows <= 1) {
+            return s;
         }
-        int temp = list[0]; // 当前的最小值
-        int max = 0; // 当前最大获利
-        for (int i = 1; i < list.length; i++) {
-            if (list[i] < temp) {
-                temp = list[i];
+
+        StringBuilder[] chars = new StringBuilder[numRows];
+        for (int i = 0; i < numRows; i++) {
+            chars[i] = new StringBuilder();
+        }
+        boolean isAdd = true;
+        int row = 0;
+        for (int i = 0; i < s.length(); i++) {
+            chars[row].append(s.charAt(i));
+            if (row == 0) {
+                isAdd = true;
+            } else if (row == numRows-1) {
+                isAdd = false;
+            }
+
+            if (isAdd) {
+                row++;
             } else {
-                if (list[i] - temp > max) {
-                    max = list[i] - temp;
-                }
+                row--;
             }
         }
-        return max;
-    }
 
-    /**
-     * 从有序数组中找出两个数，这两个数的和等于target
-     * @param list
-     * @param target
-     * @return
-     */
-    private int[] getTarget (int[] list, int target) {
-        if (list.length <= 1) {
-            return new int[]{};
+        for (int i = 1; i < numRows; i++) {
+            chars[0].append(chars[i]);
         }
-        int start = 0;
-        int end = list.length-1;
-        while (start < end) {
-            if (list[start] + list[end] > target) {
-                end--;
-            } else if (list[start] + list[end] < target) {
-                start++;
-            } else {
-                return new int[]{start, end};
-            }
-        }
-        return new int[]{};
-    }
-
-    public static void test1() {
-        Map<String, Object> params = new HashMap<>();
-        params.put("from", 1);
-        params.put("tagId", "tagId");
-        params.put("isPost", true);
-
-        for(String key : params.keySet()) {
-            LogUtils.i("test1", key + ": " + params.get(key));
-        }
-
-
-
-        String a = "hello2";
-        final String b = "hello";
-        String d = "hello";
-        String c = b + 2;
-        String e = d + 2;
-        LogUtils.i("String test1", "" + (a == c));
-        LogUtils.i("String test2", "" + (a == e));
-        LogUtils.i("String test3", "" + (("String" + 2) == a));
-        LogUtils.i("String test4", "" + ("hello2" == a));
-        LogUtils.i("String test5", "" + ((1+2) == 3));
-    }
-
-    public void test2() {
-        //临界资源
-        Service service = new Service();
-
-        //创建并启动线程A
-        ThreadA a = new ThreadA(service);
-        a.setName("A");
-        a.start();
-
-        //创建并启动线程B
-        ThreadB b = new ThreadB(service);
-        b.setName("B");
-        b.start();
-    }
-
-    //资源类
-    class Service {
-        public void print(String stringParam) {
-            try {
-                synchronized (stringParam) {
-                    System.out.println(stringParam.hashCode());
-                    System.out.println(Thread.currentThread().getName());
-                    Thread.sleep(1000);
-                    System.out.println(Thread.currentThread().getName());
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    //线程A
-    class ThreadA extends Thread {
-        private Service service;
-
-        public ThreadA(Service service) {
-            super();
-            this.service = service;
-        }
-
-        @Override
-        public void run() {
-            service.print("AA");
-        }
-    }
-
-    //线程B
-    class ThreadB extends Thread {
-        private Service service;
-
-        public ThreadB(Service service) {
-            super();
-            this.service = service;
-        }
-
-        @Override
-        public void run() {
-            service.print("AA");
-        }
-    }
-
-    private void test3() {
-        TodoList todoList = new TodoList();
-        todoList.remove();
-    }
-
-    class TodoList extends PriorityQueue<TodoItem> {
-
-    }
-
-    class TodoItem implements Comparable<TodoItem> {
-        @Override
-        public int compareTo(@NonNull TodoItem another) {
-            return 0;
-        }
+        return chars[0].toString();
     }
 }

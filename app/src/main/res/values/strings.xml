@@ -8,4 +8,5 @@
     <string name="str_cancel">取消</string>
     <string name="str_net_unusable">网络不可用，请设置网络</string>
     <string name="str_net_abnormal">网络异常，请设置网络</string>
+    <string name="title_activity_test">TestActivity</string>
 </resources>

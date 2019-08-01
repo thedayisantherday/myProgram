@@ -2,44 +2,45 @@ package com.example.zxg.myprogram.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.os.Handler;
+import android.graphics.Paint;
+import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
-import android.text.Layout;
+import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.view.ViewGroup;
 
 import com.example.zxg.myprogram.R;
+import com.example.zxg.myprogram.utils.DPIUtil;
 
 /**
- * Created by zxg on 2019/01/23.
+ * Created by zxg on 2019/07/15.
  *
- * 图文混排组件，仅支持图片在文字的四个脚
- * 若要支持在图片行中间时，需要增加位移处理，待后续处理
+ * 图文混排组件
+ * 1、暂不支持限制行数；
+ * 2、行末为英文单词时，会被隔断，可以考虑在隔断出加"-"连接符
  */
-public class ImageTextView extends LinearLayout{
-
-    private static final int TEXTVIEW_NUM = 4;
+public class ImageTextView extends View {
 
     private Context mContext;
-    private ImageView iv_img;
-    private TextView[] textViews = new TextView[TEXTVIEW_NUM];
+    private Bitmap mImage;
+    private float mImgX, mImgY;
+    private int mImgMarginTop, mImgMarginLeft, mImgMarginBottom, mImgMarginRight;
+    private String mText;
+    private int mTextColor = Color.BLACK;
+    private float mTextSize = 24, mTextSpace = 6;
+    private Typeface mTextTypeface;
+    private float mTempTextX, mTempTextY;
+    private int mBackgroundColor = Color.WHITE;
 
-    private Drawable imgSrc;
-    private int[] tv_lines = new int[TEXTVIEW_NUM];
-    private int[] tv_visibility = new int[TEXTVIEW_NUM];
-    private int textColor;
-    private int textSize;
-    private float lineSpacingAdd, lineSpacingMult;
-    private String text, overflowText;
-    private Handler mHandler = new Handler();
-    private Runnable mRunnable;
+    private int mDrawStart;
+    private boolean isDrawn = false;
 
     public ImageTextView(Context context) {
         this(context, null);
@@ -51,128 +52,262 @@ public class ImageTextView extends LinearLayout{
 
     public ImageTextView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-
         mContext = context;
         initData(attrs);
-        initView();
     }
 
     private void initData(@Nullable AttributeSet attrs) {
-        TypedArray typedArray = mContext.obtainStyledAttributes(attrs, R.styleable.ImageTextViewAttr);
-        imgSrc = typedArray.getDrawable(R.styleable.ImageTextViewAttr_imgSrc);
-        tv_lines[0] = typedArray.getInt(R.styleable.ImageTextViewAttr_topTVLines, 0);
-        tv_lines[1] = typedArray.getInt(R.styleable.ImageTextViewAttr_leftTVLines, 0);
-        tv_lines[2] = typedArray.getInt(R.styleable.ImageTextViewAttr_rightTVLines, 0);
-        tv_lines[3] = typedArray.getInt(R.styleable.ImageTextViewAttr_bottomTVLines, 0);
-        tv_visibility[0] = typedArray.getInt(R.styleable.ImageTextViewAttr_topTVVisibility, 0);
-        tv_visibility[1] = typedArray.getInt(R.styleable.ImageTextViewAttr_leftTVVisibility, 0);
-        tv_visibility[2] = typedArray.getInt(R.styleable.ImageTextViewAttr_rightTVVisibility, 0);
-        tv_visibility[3] = typedArray.getInt(R.styleable.ImageTextViewAttr_bottomTVVisibility, 0);
-        textColor = typedArray.getColor(R.styleable.ImageTextViewAttr_textColor, Color.BLACK);
-        text = typedArray.getString(R.styleable.ImageTextViewAttr_text);
-        overflowText = text;
+        setWillNotDraw(false);
+        // TODO 关注Bitmap内存泄漏问题
 
-        typedArray.recycle();
-    }
+        try {
+            TypedArray typedArray = mContext.obtainStyledAttributes(attrs, R.styleable.ImageTextViewAttr);
+            mText = typedArray.getString(R.styleable.ImageTextViewAttr_text);
+            mTextColor = typedArray.getColor(R.styleable.ImageTextViewAttr_textColor, Color.BLACK);
+            mTextSize = DPIUtil.dip2px(mContext, typedArray.getInt(R.styleable.ImageTextViewAttr_textSizeDP, 12));
+            mTextSpace = DPIUtil.dip2px(mContext, typedArray.getInt(R.styleable.ImageTextViewAttr_textSpaceDP, 6));
+            BitmapDrawable imgSrc = (BitmapDrawable)typedArray.getDrawable(R.styleable.ImageTextViewAttr_imgSrc);
+            mImage = imgSrc.getBitmap();
+            mImgMarginTop = DPIUtil.dip2px(mContext, typedArray.getInt(R.styleable.ImageTextViewAttr_imgMarginTopDp, 0));
+            mImgMarginLeft = DPIUtil.dip2px(mContext, typedArray.getInt(R.styleable.ImageTextViewAttr_imgMarginLeftDp, 0));
+            mImgMarginBottom = DPIUtil.dip2px(mContext, typedArray.getInt(R.styleable.ImageTextViewAttr_imgMarginBottomDp, 0));
+            mImgMarginRight = DPIUtil.dip2px(mContext, typedArray.getInt(R.styleable.ImageTextViewAttr_imgMarginRightDp, 0));
+            mBackgroundColor = typedArray.getColor(R.styleable.ImageTextViewAttr_backgroundColor, Color.WHITE);
+            setBackgroundColor(mBackgroundColor);
 
-    private void initView() {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.layout_image_textview,null);
-        addView(view,new LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
-
-        iv_img = (ImageView) findViewById(R.id.iv_img);
-        textViews[0] = (TextView) findViewById(R.id.tv_top);
-        textViews[1] = (TextView) findViewById(R.id.tv_left);
-        textViews[2] = (TextView) findViewById(R.id.tv_right);
-        textViews[3] = (TextView) findViewById(R.id.tv_bottom);
-
-        iv_img.setImageDrawable(imgSrc);
-        for (int i = 0; i < TEXTVIEW_NUM; i++) {
-            textViews[i].setVisibility(tv_visibility[i]);
-            textViews[i].setTextColor(textColor);
-            if (textSize > 0) {
-                textViews[i].setTextSize(textSize);
-            }
+            typedArray.recycle();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        setTVText(0);
     }
 
-    /**
-     * 逐个计算每个textview能显示的字符串长度
-     * @param index
-     */
-    private void setTVText(final int index) {
-        if (index < TEXTVIEW_NUM) {
-            if (null == textViews[index] || textViews[index].getVisibility() != VISIBLE || tv_lines[index] <= 0) {
-                if (null != textViews[index]) {
-                    textViews[index].setVisibility(GONE);
-                }
-                setTVText(index+1);
+    public void setText(String text) {
+        mText = text;
+        if (!TextUtils.isEmpty(mText)) {
+            requestLayout();
+        }
+        isDrawn = false;
+    }
+
+    public void setTextSize(float textSize) {
+        if (textSize > 0) {
+            mTextSize = textSize;
+        }
+    }
+
+    public void setTextColor(@ColorInt int color) {
+        mTextColor = color;
+    }
+
+    public void setTextSpace(float textSpace) {
+        if (textSpace >= 0) {
+            mTextSpace = textSpace;
+        }
+    }
+
+    public void setTextTypeface(Typeface textTypeface) {
+        mTextTypeface = textTypeface;
+    }
+
+    public void setImage(int imgRes) {
+        try {
+            setImage(BitmapFactory.decodeResource(getResources(), imgRes), 0, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setImage(Bitmap image) {
+        setImage(image, 0, 0);
+    }
+
+    public void setImage(Bitmap image, int imgX, int imgY) {
+        mImage = image;
+        mImgX = imgX;
+        mImgY = imgY;
+        if (mImage != null) {
+            requestLayout();
+        }
+        isDrawn = false;
+    }
+
+    public void setImageMargin(int marginTop, int marginLeft, int marginBottom, int marginRight) {
+        mImgMarginTop = marginTop;
+        mImgMarginLeft = marginLeft;
+        mImgMarginBottom = marginBottom;
+        mImgMarginRight = marginRight;
+    }
+
+    public int getImageWidth() {
+        if (mImage == null) {
+            return 0;
+        } else {
+            return mImage.getWidth() + mImgMarginLeft + mImgMarginRight;
+        }
+    }
+
+    public int getImageHeight() {
+        if (mImage == null) {
+            return 0;
+        } else {
+            return mImage.getHeight() + mImgMarginTop + mImgMarginBottom;
+        }
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+
+        try {
+            drawImage(canvas);
+            drawText(canvas);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void drawImage(Canvas canvas) {
+        if (mImage != null) {
+            Paint paint = new Paint();
+            canvas.drawBitmap(mImage, mImgX + mImgMarginLeft, mImgY + mImgMarginTop, paint);
+        }
+    }
+
+    private void drawText(Canvas canvas) {
+        if (TextUtils.isEmpty(mText)) return;
+
+        Paint paint = new Paint();
+        paint.setAntiAlias(true);
+        paint.setColor(mTextColor);
+//        paint.setTextAlign(Paint.Align.CENTER);
+        if (mTextTypeface != null) {
+            paint.setTypeface(mTextTypeface);
+        }
+        paint.setTextSize(mTextSize);
+
+        mDrawStart = 0;
+        mTempTextX = 0;
+        mTempTextY = paint.getTextSize();
+
+        // 绘制图片上面的文字
+        int topLines = (int) Math.floor(mImgY/(mTextSize + mTextSpace));
+        for (int i = 0; i < topLines; i++) {
+            int numAll = paint.breakText(mText.substring(mDrawStart), true, getWidth(), null);
+            if (mText.length() <= numAll+ mDrawStart) {
+                drawEndText(canvas, paint, (int) Math.ceil(mTempTextY +getImageHeight()));
                 return;
+            } else {
+                drawNotEndText(canvas, paint, numAll, getWidth());
+            }
+            mTempTextY += mTextSize + mTextSpace;
+        }
+
+        // 绘制和图片同行的文字
+        int sideLines = (int) Math.ceil((getImageHeight() + mImgY - topLines * (mTextSize + mTextSpace))/(mTextSize + mTextSpace));
+        if (sideLines > 0) {
+            // 如果只有左右两边有文字，则让文字居中展示
+            if (topLines <= 0) {
+                int tempDrawStart = mDrawStart;
+                for (int line = 1; line < sideLines; line++) {
+                    int numLeft = paint.breakText(mText.substring(tempDrawStart), true, mImgX, null);
+                    if (tempDrawStart + numLeft >= mText.length() && (sideLines - line) > 1) {
+                        mTempTextY += 0.5f * (getImageHeight() - (mTextSize + mTextSpace) * line);
+                        break;
+                    }
+                    tempDrawStart += numLeft;
+                    int numRight = paint.breakText(mText.substring(tempDrawStart), true, getWidth() - mImgX - getImageWidth(), null);
+                    if (tempDrawStart + numRight >= mText.length() && (sideLines - line) > 0) {
+                        mTempTextY += 0.5f * (getImageHeight() - (mTextSize + mTextSpace) * line);
+                        break;
+                    }
+                    tempDrawStart += numRight;
+                }
             }
 
-            textViews[index].setMaxLines(tv_lines[index]);
-            textViews[index].setText(overflowText);
-            mRunnable = new Runnable() {
-                @Override
-                public void run() {
-                    getOverflowText(textViews[index], tv_lines[index]);
-                    setTVText(index+1);
+            for (int i = 0; i < sideLines; i++) {
+                // 绘制图片左边的文字
+                if(mImgX > mTextSize) {
+                    int numLeft = paint.breakText(mText.substring(mDrawStart), true, mImgX, null);
+                    if (mText.length() <= numLeft+ mDrawStart) {
+                        drawEndText(canvas, paint, (int) Math.ceil(Math.max(mTempTextY, topLines * (mTextSize + mTextSpace) + getImageHeight())));
+                        return;
+                    } else {
+                        drawNotEndText(canvas, paint, numLeft, mImgX);
+                    }
                 }
-            };
-            mHandler.postDelayed(mRunnable, 5);
+
+                // 绘制图片右边的文字
+                if (getWidth() - mImgX - getImageWidth() > mTextSize) {
+                    mTempTextX = mImgX + getImageWidth();
+                    int numRight = paint.breakText(mText.substring(mDrawStart), true, getWidth() - mImgX - getImageWidth(), null);
+                    if (mText.length() <= numRight + mDrawStart) {
+                        drawEndText(canvas, paint, (int) Math.ceil(Math.max(mTempTextY, topLines * (mTextSize + mTextSpace) + getImageHeight())));
+                        return;
+                    } else {
+                        drawNotEndText(canvas, paint, numRight, getWidth() - mImgX - getImageWidth());
+                    }
+                    mTempTextX = 0;
+                }
+                mTempTextY += mTextSize + mTextSpace;
+            }
         }
+
+        long startTime = System.currentTimeMillis();
+        // 防止死循环
+        while(System.currentTimeMillis() - startTime < 5000) {
+            int numAll = paint.breakText(mText.substring(mDrawStart), true, getWidth(), null);
+            if (mText.length() <= numAll+ mDrawStart) {
+                drawEndText(canvas, paint, (int) Math.ceil(mTempTextY));
+                return;
+            } else {
+                drawNotEndText(canvas, paint, numAll, getWidth());
+            }
+            mTempTextY += mTextSize + mTextSpace;
+        }
+        drawEndText(canvas, paint, (int) Math.ceil(mTempTextY));
+    }
+
+    private void drawEndText(Canvas canvas, Paint paint, int height) {
+        String subStr = mText.substring(mDrawStart, mText.length());
+        canvas.drawText(subStr, mTempTextX, mTempTextY, paint);
+        setLayout(height);
+    }
+
+    private void drawNotEndText(Canvas canvas, Paint paint, int wordNum, float width) {
+        String subStr = mText.substring(mDrawStart, wordNum+mDrawStart);
+        float offsetX = (width - paint.measureText(subStr)) / wordNum;
+        for (int i = 0; i < wordNum; i++, mDrawStart++) {
+            subStr = mText.substring(mDrawStart, mDrawStart+1);
+            canvas.drawText(subStr, mTempTextX, mTempTextY, paint);
+            mTempTextX += offsetX + paint.measureText(subStr);
+        }
+        mTempTextX = 0;
     }
 
     /**
-     * 为每个textview分配显示的字符串
-     * 分割字符串时，需要做延时处理；否则textView.getLayout()为null
-     * @param textView
-     * @param maxLines
+     * 因为自定义view不能设置wrap_content,所以绘制完成之后重新设置一下view的高度
+     * @param height
      */
-    private void getOverflowText(TextView textView, int maxLines) {
-        if (null == textView || maxLines <= 0) {
-            return;
-        }
-
-        Layout layout = textView.getLayout();
-        int lines = textView.getLineCount();
-        if (null == layout || lines <= 0) {
-            return;
-        }
-
-        int end = layout.getLineEnd(Math.min(lines, maxLines) - 1);
-        overflowText = overflowText.substring(end);
-    }
-
-    public void setTextColor(@ColorInt int textColor) {
-        this.textColor = textColor;
-        for (int i = 0; i < TEXTVIEW_NUM; i++) {
-            textViews[i].setTextColor(textColor);
+    private void setLayout(int height) {
+        if (!isDrawn) {
+            ViewGroup.LayoutParams layoutParams = getLayoutParams();
+            layoutParams.height = height + 10;
+            setLayoutParams(layoutParams);
+            isDrawn = true;
         }
     }
 
-    public void setTextSize(int pixel) {
-        this.textSize = pixel;
-        for (int i = 0; i < TEXTVIEW_NUM; i++) {
-            textViews[i].setTextSize(pixel);
-        }
-    }
-
-    public void setTextviewLines(int top, int left, int right, int bottom) {
-        mHandler.removeCallbacks(mRunnable);
-        tv_lines = new int[]{top, left, right, bottom};
-        overflowText = text;
-        setTVText(0);
-    }
-
-    public void setTextViewLineSpacing(float add, float mult) {
-        if (lineSpacingAdd != add || lineSpacingMult != mult) {
-            lineSpacingAdd = add;
-            lineSpacingMult = mult;
-
-            for (int i = 0; i < TEXTVIEW_NUM; i++) {
-                textViews[i].setLineSpacing(add, mult);
-            }
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        if (mImage != null) {
+            mImage.recycle();
+            mImage = null;
         }
     }
 }

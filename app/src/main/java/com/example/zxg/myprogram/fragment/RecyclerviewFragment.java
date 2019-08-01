@@ -14,6 +14,10 @@ import com.example.zxg.myprogram.activities.AnimCompatActivity;
 import com.example.zxg.myprogram.adapter.RecyclerViewAdapter;
 import com.example.zxg.myprogram.utils.AnimUtils;
 import com.example.zxg.myprogram.utils.LogUtils;
+import com.example.zxg.myprogram.view.BaseFloorEntity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by zxg on 2016/11/7.
@@ -42,10 +46,21 @@ public class RecyclerviewFragment extends BaseFragment{
         //使RecyclerView保持固定的大小，用于自身的优化
         rv_recyclerview.setHasFixedSize(true);
         rv_recyclerview.setLayoutManager(new LinearLayoutManager(mActivity));
-        mAdapter = new RecyclerViewAdapter();
-        mAdapter.setOnItemClickListener(new RecyclerViewAdapter.OnItemClickListener() {
+
+        List<BaseFloorEntity> mCommonModels = new ArrayList<BaseFloorEntity>();
+        RecyclerViewAdapter.TestFloorData model = new RecyclerViewAdapter.TestFloorData(RecyclerViewAdapter.TestFloorData.FLOOR_TYPE_1, "1", "the first item", "{[Hello, this is the content of the first item]}");
+        mCommonModels.add(model);
+        model = new RecyclerViewAdapter.TestFloorData(RecyclerViewAdapter.TestFloorData.FLOOR_TYPE_2, "2", "the second item", "{[Hello, this is the content of the second item]}");
+        mCommonModels.add(model);
+        model = new RecyclerViewAdapter.TestFloorData(RecyclerViewAdapter.TestFloorData.FLOOR_TYPE_1, "3", "the third item", "{[Hello, this is the content of the third item]}");
+        mCommonModels.add(model);
+        model = new RecyclerViewAdapter.TestFloorData(RecyclerViewAdapter.TestFloorData.FLOOR_TYPE_1, "4", "the fourth item", "{[Hello, this is the content of the fourth item]}");
+        mCommonModels.add(model);
+        model = new RecyclerViewAdapter.TestFloorData(RecyclerViewAdapter.TestFloorData.FLOOR_TYPE_2, "5", "the fifth item", "{[Hello, this is the content of the fifth item]}");
+        mCommonModels.add(model);
+        mAdapter = new RecyclerViewAdapter(mCommonModels, new View.OnClickListener() {
             @Override
-            public void onItemClick(View view, int position) {
+            public void onClick(View view) {
                 //RecyclerView item点击事件
                 LogUtils.i(TAG, "RecyclerView item clicked!");
                 AnimUtils.doSceneTransitionAnim(mActivity,

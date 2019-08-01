@@ -7,16 +7,16 @@ import android.view.ViewGroup;
 import java.util.List;
 
 public class BaseRecyclerviewAdapter extends RecyclerView.Adapter<BaseVH> {
-    public final List<BaseFloorEntity> list;
+    public final List<BaseFloorEntity> floorEntityList;
     private final boolean isAppContext;
     public LayoutInflater inflater;
 
-    public BaseRecyclerviewAdapter(List<BaseFloorEntity> list) {
-        this(list, false);
+    public BaseRecyclerviewAdapter(List<BaseFloorEntity> floorEntityList) {
+        this(floorEntityList, false);
     }
 
-    public BaseRecyclerviewAdapter(List<BaseFloorEntity> list, boolean isAppContext) {
-        this.list = list;
+    public BaseRecyclerviewAdapter(List<BaseFloorEntity> floorEntityList, boolean isAppContext) {
+        this.floorEntityList = floorEntityList;
         this.isAppContext = isAppContext;
     }
 
@@ -29,14 +29,14 @@ public class BaseRecyclerviewAdapter extends RecyclerView.Adapter<BaseVH> {
     }
 
     public void onBindViewHolder(BaseVH holder, int position) {
-        holder.bindVH((BaseFloorEntity)this.list.get(position));
+        holder.bindVH((BaseFloorEntity)this.floorEntityList.get(position));
     }
 
     public int getItemViewType(int position) {
-        return ((BaseFloorEntity)this.list.get(position)).getFloorType();
+        return ((BaseFloorEntity)this.floorEntityList.get(position)).getFloorType();
     }
 
     public int getItemCount() {
-        return this.list.size();
+        return this.floorEntityList.size();
     }
 }

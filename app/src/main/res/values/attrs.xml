@@ -1,36 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="ImageTextViewAttr">
-        <attr name="topTVLines" format="integer"/>
-        <attr name="leftTVLines" format="integer"/>
-        <attr name="rightTVLines" format="integer"/>
-        <attr name="bottomTVLines" format="integer"/>
-        <attr name="topTVVisibility">
-            <enum name="visible" value="0" />
-            <enum name="invisible" value="4" />
-            <enum name="gone" value="8" />
-        </attr>
-        <attr name="leftTVVisibility">
-            <enum name="visible" value="0" />
-            <enum name="invisible" value="4" />
-            <enum name="gone" value="8" />
-        </attr>
-        <attr name="rightTVVisibility">
-            <enum name="visible" value="0" />
-            <enum name="invisible" value="4" />
-            <enum name="gone" value="8" />
-        </attr>
-        <attr name="bottomTVVisibility">
-            <enum name="visible" value="0" />
-            <enum name="invisible" value="4" />
-            <enum name="gone" value="8" />
-        </attr>
         <attr name="textColor" format="color" />
-        <attr name="textSize" format="dimension" />
+        <attr name="textSizeDP" format="integer" />
+        <attr name="textSpaceDP" format="integer" />
         <attr name="text" format="string" />
         <attr name="imgSrc" format="reference" />
+        <attr name="imgMarginTopDp" format="integer" />
+        <attr name="imgMarginLeftDp" format="integer" />
+        <attr name="imgMarginBottomDp" format="integer" />
+        <attr name="imgMarginRightDp" format="integer" />
         <attr name="backgroundColor" format="color"/>
-        <attr name="backgroundDrawable" format="reference"/>
     </declare-styleable>
 
 </resources>

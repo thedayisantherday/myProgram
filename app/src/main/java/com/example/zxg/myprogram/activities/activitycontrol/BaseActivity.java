@@ -72,7 +72,7 @@ public abstract class BaseActivity extends FragmentActivity {
      * 初始化Activity头部
      * @param viewHolder
      */
-    public abstract void initHead(ViewHolder viewHolder);
+    public void initHead(ViewHolder viewHolder) {};
 
     @Override
     protected void onResume() {

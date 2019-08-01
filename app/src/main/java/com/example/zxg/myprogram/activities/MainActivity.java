@@ -19,7 +19,6 @@ import com.example.zxg.myprogram.common.TupleUtil;
 import com.example.zxg.myprogram.netapi.api.LoginApi;
 import com.example.zxg.myprogram.utils.AnimUtils;
 import com.example.zxg.myprogram.utils.LogUtils;
-import com.example.zxg.myprogram.utils.MurmurHash;
 import com.example.zxg.myprogram.utils.NetUtils;
 import com.example.zxg.myprogram.utils.SysUtils;
 import com.example.zxg.myprogram.utils.TimeUtils;
@@ -45,7 +44,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
     private LinearLayout ll_share;
     private Button btn_net, btn_scale, btn_viewpager, btn_test, btn_custom_dialog, btn_popup_dialog,
             btn_moving_with_finger, btn_tuple, btn_android_h5, btn_vertical_viewpager, btn_webview, btn_doubleSurfaceViewFlicker,
-            btn_touch_event, btn_movable_view;
+            btn_touch_event, btn_movable_view, btn_loop_recyclerview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +98,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
 
         btn_movable_view = (Button) findViewById(R.id.btn_movable_view);
         btn_movable_view.setOnClickListener(this);
+
+        btn_loop_recyclerview = (Button) findViewById(R.id.btn_loop_recyclerview);
+        btn_loop_recyclerview.setOnClickListener(this);
     }
 
     @Override
@@ -164,6 +166,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
                     }
                 };
                 loginApi.getTest();
+                AnimUtils.doCustomAnim((MainActivity)mContext,
+                        AutoClickActivity.class, R.anim.in_from_left, R.anim.out_to_right);
                 break;
             case R.id.btn_scale:
                 AnimUtils.doCustomAnim((MainActivity)mContext,
@@ -176,6 +180,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
             case R.id.btn_test:
                 /*AnimUtils.doScaleUpAnim((MainActivity)mContext, com.example.zxg.myprogram.test1.MainActivity.class,
                         v, v.getWidth(), v.getHeight(), 0, 0);*/
+                AnimUtils.doCustomAnim((MainActivity)mContext,
+                        TestActivity.class, R.anim.in_from_left, R.anim.out_to_right);
                 /*AnimUtils.doScaleUpAnim((MainActivity)mContext, TestActivity.class,
                         v, v.getWidth(), v.getHeight(), 0, 0);*/
                 Log.i("convert String", "onClick: 3 convertStr = " + convert("PAYPALISHIRING", 3));
@@ -254,6 +260,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
             case R.id.btn_movable_view:
                 AnimUtils.doCustomAnim((MainActivity)mContext,
                         MovableViewActivity.class, R.anim.in_from_left, R.anim.out_to_right);
+                break;
+            case R.id.btn_loop_recyclerview:
+                AnimUtils.doCustomAnim((MainActivity)mContext,
+                        LoopRecyclerviewActivity.class, R.anim.in_from_left, R.anim.out_to_right);
                 break;
         }
     }

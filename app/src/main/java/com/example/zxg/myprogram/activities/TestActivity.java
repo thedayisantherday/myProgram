@@ -1,20 +1,17 @@
 package com.example.zxg.myprogram.activities;
 
+import android.app.Activity;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.Layout;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.example.zxg.myprogram.R;
+import com.example.zxg.myprogram.utils.DPIUtil;
 import com.example.zxg.myprogram.utils.LogUtils;
 import com.example.zxg.myprogram.widget.ImageTextView;
 
@@ -22,17 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
 
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.ObservableSource;
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
-
-public class TestActivity extends AppCompatActivity {
+public class TestActivity extends Activity {
 
     private TextView tv_test;
     private ImageTextView imageTextView;
@@ -49,11 +36,12 @@ public class TestActivity extends AppCompatActivity {
             }
         });
         imageTextView = (ImageTextView) findViewById(R.id.imageTextView);
+        imageTextView.setTextSpace(20);
+        imageTextView.setTextSize(DPIUtil.dip2px(TestActivity.this, 15));
+        imageTextView.setText("1随着天气降温，我们的本能又在驱使着我们去不断给自己补充热量，这样身体虽然变暖了，但也会让我们长胖一圈。很多人会选择慢跑、健走等方式来健身，但是这样的运动方式由于缺少竞争性，很容易让人产生运动枯燥感。");
+        imageTextView.setImage(BitmapFactory.decodeResource(getResources(), R.mipmap.app_icon));
         imageTextView.setBackgroundColor(Color.parseColor("#ff00ff"));
-        imageTextView.setTextSize(30);
         imageTextView.setTextColor(Color.RED);
-        imageTextView.setTextviewLines(0, 0, 1, 3);
-        imageTextView.setTextViewLineSpacing(5, 1.0f);
 
 //        Glide.with(this).load("").downloadOnly()
         /*Observable.create(new ObservableOnSubscribe<String>() {

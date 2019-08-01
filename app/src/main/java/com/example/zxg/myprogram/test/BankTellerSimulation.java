@@ -3,7 +3,10 @@ package com.example.zxg.myprogram.test;
 import com.example.zxg.myprogram.algorithm.MergeSort;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.Stack;
 
 public class BankTellerSimulation {
     static final int MAX_LINE_SIZE = 50;
@@ -55,6 +58,63 @@ public class BankTellerSimulation {
         l2.next.next.next = new ListNode(7);
         ListNode[] list = new ListNode[]{l1, l2};
         mergeKLists(list);
+        swapPairs(l2);
+
+        removeDuplicates(new int[]{1, 1, 2});
+        uniquePaths(10, 10);
+        uniquePaths(1, 2);
+        uniquePaths(3, 1);
+        uniquePaths(3, 2);
+        uniquePaths(36, 7);
+        uniquePaths(3, 3);
+        uniquePaths(4, 4);
+
+        uniquePathsWithObstacles(new int[][]{{0, 0, 0}, {0, 1, 0}, {0, 0, 0}});
+        longestIncreasingPath(new int[][]{{9,9,4},{6,6,8},{2,1,1}});
+    }
+
+    private static final int[][] dir = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+    private static int m, n;
+    public static int longestIncreasingPath(int[][] grid) {
+        int m = grid.length;
+        if (m == 0) return 0;
+        int n = grid[0].length;
+        // padding the matrix with zero as boundaries
+        // assuming all positive integer, otherwise use INT_MIN as boundaries
+        int[][] matrix = new int[m + 2][n + 2];
+        for (int i = 0; i < m; ++i)
+            System.arraycopy(grid[i], 0, matrix[i + 1], 1, n);
+
+        // calculate outdegrees
+        int[][] outdegree = new int[m + 2][n + 2];
+        for (int i = 1; i <= m; ++i)
+            for (int j = 1; j <= n; ++j)
+                for (int[] d: dir)
+                    if (matrix[i][j] < matrix[i + d[0]][j + d[1]])
+                        outdegree[i][j]++;
+
+        // find leaves who have zero out degree as the initial level
+        List<int[]> leaves = new ArrayList<>();
+        for (int i = 1; i <= m; ++i)
+            for (int j = 1; j <= n; ++j)
+                if (outdegree[i][j] == 0) leaves.add(new int[]{i, j});
+
+        // remove leaves level by level in topological order
+        int height = 0;
+        while (!leaves.isEmpty()) {
+            height++;
+            List<int[]> newLeaves = new ArrayList<>();
+            for (int[] node : leaves) {
+                for (int[] d:dir) {
+                    int x = node[0] + d[0], y = node[1] + d[1];
+                    if (matrix[node[0]][node[1]] > matrix[x][y])
+                        if (--outdegree[x][y] == 0)
+                            newLeaves.add(new int[]{x, y});
+                }
+            }
+            leaves = newLeaves;
+        }
+        return height;
     }
 
     public static double findMedianSortedArrays(int[] nums1, int[] nums2) {
@@ -361,9 +421,79 @@ public class BankTellerSimulation {
         return result.next;
     }
 
+    public static ListNode swapPairs(ListNode head) {
+        if(head == null || head.next == null) return head;
+
+        ListNode temp = head;
+        ListNode index;
+
+        head = head.next;
+        index = head.next;
+        head.next = temp;
+        temp.next = swapPairs(index);
+        return head;
+    }
+
     public static class ListNode {
         int val;
         ListNode next;
         ListNode(int x) { val = x; }
+    }
+
+    public static int removeDuplicates(int[] nums) {
+        Set set = new HashSet();
+        if (nums == null || nums.length == 0) return 0;
+        int result = 1;
+        for (int i = 1; i < nums.length; i++) {
+            if (nums[i] != nums[i-1]) {
+                if (i != result) {
+                    nums[result] = nums[i];
+                }
+                result++;
+            }
+        }
+        return result;
+    }
+
+    public static int uniquePaths(int m, int n) {
+        /*int[] all = new int[n];
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (i == 0 || j == 0) {
+                    all[j] = 1;
+                } else {
+                    all[j] = all[j] + all[j - 1];
+                }
+            }
+        }
+        return all[n - 1];*/
+        double result = 1;
+        for (int i = m-1; i >= 1; i--) {
+            result *= (m+n-1-i)/(double) i;
+        }
+        return (int)Math.round(result);
+    }
+
+    public static int uniquePathsWithObstacles(int[][] obstacleGrid) {
+        if (obstacleGrid == null || obstacleGrid.length <= 0 || obstacleGrid[0].length <= 0) return 0;
+
+        for (int i = 0; i < obstacleGrid.length; i++) {
+            for (int j = 0; j < obstacleGrid[0].length; j++) {
+                if (i == 0 || j == 0) {
+                    if (obstacleGrid[i][j] == 1 || (i > 0 && obstacleGrid[i-1][j] == 0) || (j > 0 && obstacleGrid[i][j-1] == 0)) {
+                        obstacleGrid[i][j] = 0;
+                    } else {
+                        obstacleGrid[i][j] = 1;
+                    }
+                } else {
+                    if (obstacleGrid[i][j] == 1) {
+                        obstacleGrid[i][j] = 0;
+                    } else {
+                        obstacleGrid[i][j] = obstacleGrid[i - 1][j] + obstacleGrid[i][j - 1];
+                    }
+                }
+            }
+        }
+        return obstacleGrid[obstacleGrid.length-1][obstacleGrid[0].length-1];
     }
 }

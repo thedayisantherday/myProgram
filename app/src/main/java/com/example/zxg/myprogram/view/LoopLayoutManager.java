@@ -1,37 +1,32 @@
 package com.example.zxg.myprogram.view;
 
+import android.content.Context;
+import android.graphics.PointF;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 
-public class LoopLayoutManager extends RecyclerView.LayoutManager {
+public class LoopLayoutManager extends LinearLayoutManager {
 
     public static final int HORIZONTAL = OrientationHelper.HORIZONTAL;
     public static final int VERTICAL = OrientationHelper.VERTICAL;
 
+    private float fMillisecondsPerPx = 1.0f;
     private int mOrientation = HORIZONTAL;
     private boolean looperEnable = true;
+
+    public LoopLayoutManager(Context context) {
+        super(context);
+    }
 
     @Override
     public RecyclerView.LayoutParams generateDefaultLayoutParams() {
         return new RecyclerView.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-    }
-
-    public void setOrientation(int orientation) {
-        if (orientation != HORIZONTAL && orientation != VERTICAL) {
-            throw new IllegalArgumentException("invalid orientation:" + orientation);
-        }
-        assertNotInLayoutOrScroll(null);
-        if (orientation != mOrientation) {
-            mOrientation = orientation;
-            requestLayout();
-        }
-    }
-
-    public void setLooperEnable(boolean looperEnable) {
-        this.looperEnable = looperEnable;
     }
 
     @Override
@@ -221,5 +216,42 @@ public class LoopLayoutManager extends RecyclerView.LayoutManager {
                 }
             }
         }
+    }
+
+    public void smoothScrollToPosition(RecyclerView recyclerView, RecyclerView.State state, int position) {
+        LinearSmoothScroller linearSmoothScroller = new LinearSmoothScroller(recyclerView.getContext()) {
+                @Override
+                public PointF computeScrollVectorForPosition(int targetPosition) {
+                    return LoopLayoutManager.this.computeScrollVectorForPosition(targetPosition);
+                }
+
+                //This returns the milliseconds it takes to scroll one pixel.
+                @Override
+                protected float calculateSpeedPerPixel (DisplayMetrics displayMetrics) {
+                    return fMillisecondsPerPx;
+                }
+
+            };
+        linearSmoothScroller.setTargetPosition(position);
+        startSmoothScroll(linearSmoothScroller);
+    }
+
+    public void setOrientation(int orientation) {
+        if (orientation != HORIZONTAL && orientation != VERTICAL) {
+            throw new IllegalArgumentException("invalid orientation:" + orientation);
+        }
+        assertNotInLayoutOrScroll(null);
+        if (orientation != mOrientation) {
+            mOrientation = orientation;
+            requestLayout();
+        }
+    }
+
+    public void setLooperEnable(boolean looperEnable) {
+        this.looperEnable = looperEnable;
+    }
+
+    public void setMillisecondsPerPx(float fMillisecondsPerPx) {
+        this.fMillisecondsPerPx = fMillisecondsPerPx;
     }
 }

@@ -1,5 +1,7 @@
 package com.example.zxg.myprogram.test;
 
+import android.util.Log;
+
 import com.example.zxg.myprogram.algorithm.MergeSort;
 
 import java.util.ArrayList;
@@ -11,6 +13,10 @@ import java.util.Stack;
 public class BankTellerSimulation {
     static final int MAX_LINE_SIZE = 50;
     static final int ADJUSTMENT_PERIOD = 1000;
+    private static int tts = 10;
+    private int tt = 10;
+
+    static Test<Child>[] tests;
 
     public static void main(String[] args) throws Exception {
         /*ExecutorService exec = Executors.newCachedThreadPool();
@@ -27,6 +33,19 @@ public class BankTellerSimulation {
         }
 
         exec.shutdown();*/
+
+
+        Test test = new Test<Child>(new Child());
+        Test1 test1 = new Test1(new Child());
+        test.get();
+        test1.get();
+
+        BankTellerSimulation bankTellerSimulation = new BankTellerSimulation();
+        Test00 test00 = bankTellerSimulation.new Test00();
+        test00.test();
+
+        Test<Integer> test11 = new Test<Integer>();
+//        tests = (Test<Child>[]) new Object[3];
 
         int[] nums1 = {1, 9, 11};
         int[] nums2 = {2, 13};
@@ -71,6 +90,10 @@ public class BankTellerSimulation {
 
         uniquePathsWithObstacles(new int[][]{{0, 0, 0}, {0, 1, 0}, {0, 0, 0}});
         longestIncreasingPath(new int[][]{{9,9,4},{6,6,8},{2,1,1}});
+
+
+        Log.i("convert String", "onClick: 3 convertStr = " + convert("PAYPALISHIRING", 3));
+        Log.i("convert String", "onClick: 4 convertStr = " + convert("PAYPALISHIRING", 4));
     }
 
     private static final int[][] dir = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
@@ -437,6 +460,7 @@ public class BankTellerSimulation {
     public static class ListNode {
         int val;
         ListNode next;
+        ListNode() {}
         ListNode(int x) { val = x; }
     }
 
@@ -495,5 +519,125 @@ public class BankTellerSimulation {
             }
         }
         return obstacleGrid[obstacleGrid.length-1][obstacleGrid[0].length-1];
+    }
+
+
+    public static class Test<T> {
+        public T entity;
+        public T[] entitys;
+        @SuppressWarnings("unChecked")
+        public Test() {
+            entitys = (T[])new Object[10];
+        }
+        public Test(T t) {
+            entity = t;
+        }
+
+        public T get() {
+            return entity;
+        }
+    }
+
+    public static class Test1 {
+        public Base entity;
+        public Test1(Base t) {
+            entity = t;
+        }
+
+        public Base get() {
+            BankTellerSimulation.tts = 1;
+            return entity;
+        }
+    }
+
+    public static class Child extends Base{
+        public void func(){}
+    }
+
+    public static class Base {
+
+    }
+
+    public class Test00 {
+        public Test00() {}
+        public void test(){
+            int xx = tt +2;
+        }
+    }
+
+    /**
+     *
+     * @param str
+     * @param start
+     */
+    private void printStr (String str, int start) {
+        if (str == null || str.length() == 0) {
+            return;
+        }
+        if (str.length() == start) {
+            System.out.println(str);
+        }
+        for (int i = start-1; i < str.length(); i++) {
+            String temp = str.substring(0, start-1) + str.charAt(i);
+            if (start < str.length()) {
+                temp = temp + str.replace(String.valueOf(str.charAt(i)), "").substring(start-1);
+            }
+            printStr(temp, start+1);
+        }
+    }
+
+    private void printStr1 (String str, int start) {
+        if (str == null || str.length() == 0) {
+            return;
+        }
+        if (str.length() == start) {
+            System.out.println(str);
+        }
+        char[] temp = str.toCharArray();
+        for (int i = start; i < temp.length; i++) {
+            swipt(temp, start, i);
+            printStr1(new String(temp), start + 1);
+        }
+    }
+
+    private static void swipt(char[] chars, int start, int index) {
+        if (start >= index) {
+            return;
+        }
+        char temp = chars[start];
+        chars[start] = chars[index];
+        chars[index] = temp;
+    }
+
+    public static String convert(String s, int numRows) {
+        if (s == null || numRows <= 1) {
+            return s;
+        }
+
+        StringBuilder[] chars = new StringBuilder[numRows];
+        for (int i = 0; i < numRows; i++) {
+            chars[i] = new StringBuilder();
+        }
+        boolean isAdd = true;
+        int row = 0;
+        for (int i = 0; i < s.length(); i++) {
+            chars[row].append(s.charAt(i));
+            if (row == 0) {
+                isAdd = true;
+            } else if (row == numRows-1) {
+                isAdd = false;
+            }
+
+            if (isAdd) {
+                row++;
+            } else {
+                row--;
+            }
+        }
+
+        for (int i = 1; i < numRows; i++) {
+            chars[0].append(chars[i]);
+        }
+        return chars[0].toString();
     }
 }

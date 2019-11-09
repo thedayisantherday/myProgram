@@ -32,11 +32,18 @@
             android:text="事件分发"/>
 
         <Button
-            android:id="@+id/btn_bluetooth"
+            android:id="@+id/btn_bluetooth_control"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_margin="10dp"
-            android:text="蓝牙"/>
+            android:text="蓝牙连接"/>
+
+        <Button
+            android:id="@+id/btn_bluetooth_scan"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_margin="10dp"
+            android:text="蓝牙扫描"/>
 
     </LinearLayout>
 

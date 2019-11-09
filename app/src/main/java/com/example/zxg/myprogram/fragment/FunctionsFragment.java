@@ -11,19 +11,11 @@ import android.widget.Toast;
 
 import com.example.zxg.myprogram.R;
 import com.example.zxg.myprogram.activities.AndroidH5Activity;
-import com.example.zxg.myprogram.activities.AutoClickActivity;
-import com.example.zxg.myprogram.activities.BluetoothActivity;
+import com.example.zxg.myprogram.activities.BluetoothControlActivity;
+import com.example.zxg.myprogram.activities.BluetoothScanActivity;
 import com.example.zxg.myprogram.activities.TouchEventActivity;
 import com.example.zxg.myprogram.activities.WebviewActivity;
-import com.example.zxg.myprogram.common.ThreeTuple;
-import com.example.zxg.myprogram.common.TupleUtil;
-import com.example.zxg.myprogram.netapi.api.LoginApi;
 import com.example.zxg.myprogram.utils.AnimUtils;
-import com.example.zxg.myprogram.utils.LogUtils;
-import com.example.zxg.myprogram.utils.NetUtils;
-import com.example.zxg.myprogram.utils.SysUtils;
-import com.example.zxg.myprogram.utils.TimeUtils;
-import com.example.zxg.myprogram.utils.XUtilsTools;
 
 /**
  * description ：
@@ -35,7 +27,8 @@ public class FunctionsFragment extends BaseFragment implements View.OnClickListe
     private Button btn_android_h5,
             btn_webview,
             btn_touch_event,
-            btn_bluetooth;
+            btn_bluetooth_control,
+            btn_bluetooth_scan;
 
     @Nullable
     @Override
@@ -61,8 +54,11 @@ public class FunctionsFragment extends BaseFragment implements View.OnClickListe
         btn_touch_event = (Button) rootView.findViewById(R.id.btn_touch_event);
         btn_touch_event.setOnClickListener(this);
 
-        btn_bluetooth = (Button) rootView.findViewById(R.id.btn_bluetooth);
-        btn_bluetooth.setOnClickListener(this);
+        btn_bluetooth_control = (Button) rootView.findViewById(R.id.btn_bluetooth_control);
+        btn_bluetooth_control.setOnClickListener(this);
+
+        btn_bluetooth_scan = (Button) rootView.findViewById(R.id.btn_bluetooth_scan);
+        btn_bluetooth_scan.setOnClickListener(this);
     }
 
     @Override
@@ -80,9 +76,13 @@ public class FunctionsFragment extends BaseFragment implements View.OnClickListe
                 AnimUtils.doCustomAnim(mActivity,
                         TouchEventActivity.class, R.anim.in_from_left, R.anim.out_to_right);
                 break;
-            case R.id.btn_bluetooth:
+            case R.id.btn_bluetooth_control:
                 AnimUtils.doCustomAnim(mActivity,
-                        BluetoothActivity.class, R.anim.in_from_left, R.anim.out_to_right);
+                        BluetoothControlActivity.class, R.anim.in_from_left, R.anim.out_to_right);
+                break;
+            case R.id.btn_bluetooth_scan:
+                AnimUtils.doCustomAnim(mActivity,
+                        BluetoothScanActivity.class, R.anim.in_from_left, R.anim.out_to_right);
                 break;
         }
     }

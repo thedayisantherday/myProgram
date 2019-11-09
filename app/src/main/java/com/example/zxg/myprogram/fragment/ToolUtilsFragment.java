@@ -10,18 +10,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.zxg.myprogram.R;
-import com.example.zxg.myprogram.activities.AndroidH5Activity;
 import com.example.zxg.myprogram.activities.AutoClickActivity;
-import com.example.zxg.myprogram.activities.LoopRecyclerviewActivity;
-import com.example.zxg.myprogram.activities.MovableViewActivity;
-import com.example.zxg.myprogram.activities.MovingWithFingerActivity;
-import com.example.zxg.myprogram.activities.ScaleActivity;
-import com.example.zxg.myprogram.activities.SurfaceViewActivity;
-import com.example.zxg.myprogram.activities.TestActivity;
-import com.example.zxg.myprogram.activities.TouchEventActivity;
-import com.example.zxg.myprogram.activities.VerticalViewpagerActivity;
-import com.example.zxg.myprogram.activities.ViewpagerActivity;
-import com.example.zxg.myprogram.activities.WebviewActivity;
 import com.example.zxg.myprogram.common.ThreeTuple;
 import com.example.zxg.myprogram.common.TupleUtil;
 import com.example.zxg.myprogram.netapi.api.LoginApi;
@@ -31,11 +20,6 @@ import com.example.zxg.myprogram.utils.NetUtils;
 import com.example.zxg.myprogram.utils.SysUtils;
 import com.example.zxg.myprogram.utils.TimeUtils;
 import com.example.zxg.myprogram.utils.XUtilsTools;
-import com.example.zxg.myprogram.widget.dialogs.CustomDialog;
-import com.example.zxg.myprogram.widget.dialogs.PopupFromBottomDialog;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * description ：

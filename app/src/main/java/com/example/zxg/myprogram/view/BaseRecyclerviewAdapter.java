@@ -11,6 +11,10 @@ public class BaseRecyclerviewAdapter extends RecyclerView.Adapter<BaseVH> {
     private final boolean isAppContext;
     public LayoutInflater inflater;
 
+    public BaseRecyclerviewAdapter() {
+        this(null, false);
+    }
+
     public BaseRecyclerviewAdapter(List<BaseFloorEntity> floorEntityList) {
         this(floorEntityList, false);
     }
@@ -29,14 +33,22 @@ public class BaseRecyclerviewAdapter extends RecyclerView.Adapter<BaseVH> {
     }
 
     public void onBindViewHolder(BaseVH holder, int position) {
-        holder.bindVH((BaseFloorEntity)this.floorEntityList.get(position));
+        if (floorEntityList != null && floorEntityList.size() > position) {
+            holder.bindVH(this.floorEntityList.get(position));
+        }
     }
 
     public int getItemViewType(int position) {
-        return ((BaseFloorEntity)this.floorEntityList.get(position)).getFloorType();
+        if (floorEntityList != null && floorEntityList.size() > position) {
+            return this.floorEntityList.get(position).getFloorType();
+        }
+        return 0;
     }
 
     public int getItemCount() {
-        return this.floorEntityList.size();
+        if (floorEntityList != null) {
+            return this.floorEntityList.size();
+        }
+        return 0;
     }
 }

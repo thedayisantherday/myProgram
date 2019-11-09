@@ -9,4 +9,8 @@
     <string name="str_net_unusable">网络不可用，请设置网络</string>
     <string name="str_net_abnormal">网络异常，请设置网络</string>
     <string name="title_activity_test">TestActivity</string>
+
+
+    <string name="connected">Connected</string>
+    <string name="disconnected">Disconnected</string>
 </resources>

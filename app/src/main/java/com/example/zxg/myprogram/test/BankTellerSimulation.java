@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
+import java.util.concurrent.CyclicBarrier;
 
 public class BankTellerSimulation {
     static final int MAX_LINE_SIZE = 50;
@@ -92,8 +93,23 @@ public class BankTellerSimulation {
         longestIncreasingPath(new int[][]{{9,9,4},{6,6,8},{2,1,1}});
 
 
-        Log.i("convert String", "onClick: 3 convertStr = " + convert("PAYPALISHIRING", 3));
-        Log.i("convert String", "onClick: 4 convertStr = " + convert("PAYPALISHIRING", 4));
+//        Log.i("convert String", "onClick: 3 convertStr = " + convert("PAYPALISHIRING", 3));
+//        Log.i("convert String", "onClick: 4 convertStr = " + convert("PAYPALISHIRING", 4));
+
+        CyclicBarrier cyclicBarrier = new CyclicBarrier(5, new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("线程组执行结束");
+            }
+        });
+        for (int i = 0; i < 5; i++) {
+            new Thread(new readNum(i,cyclicBarrier)).start();
+        }
+        //CyclicBarrier 可以重复利用，
+        // 这个是CountDownLatch做不到的
+//        for (int i = 11; i < 16; i++) {
+//            new Thread(new readNum(i,cyclicBarrier)).start();
+//        }
     }
 
     private static final int[][] dir = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
@@ -639,5 +655,26 @@ public class BankTellerSimulation {
             chars[0].append(chars[i]);
         }
         return chars[0].toString();
+    }
+
+    static class readNum  implements Runnable{
+        private int id;
+        private CyclicBarrier cyc;
+        public readNum(int id,CyclicBarrier cyc){
+            this.id = id;
+            this.cyc = cyc;
+        }
+        @Override
+        public void run() {
+            synchronized (this){
+                System.out.println("id:"+id);
+                try {
+                    cyc.await();
+                    System.out.println("线程组任务" + id + "结束，其他任务继续");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

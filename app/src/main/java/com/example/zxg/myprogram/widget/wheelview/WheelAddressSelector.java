@@ -17,6 +17,10 @@ import com.example.zxg.myprogram.widget.wheelview.model.DistrictModel;
 import com.example.zxg.myprogram.widget.wheelview.model.ProvinceModel;
 import com.example.zxg.myprogram.widget.wheelview.view.WheelView;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
@@ -26,6 +30,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
@@ -184,9 +190,11 @@ public class WheelAddressSelector implements OnClickListener, OnWheelChangedList
 			//pull解析省市区的xml数据
 //			provinceList = pullParser(input);
 			//sax解析省市区的xml数据
-//	            provinceList = saxParser(input);
+//	        provinceList = saxParser(input);
+			//dom解析省市区的xml数据
+	        provinceList = domParser(input);
 			//解析省市区的JSON数据
-			provinceList = new JsonParserHandle(mContext).getProvinceList();
+//			provinceList = new JsonParserHandle(mContext).getProvinceList();
 			input.close();
 
 			//*/ 初始化默认选中的省、市、区
@@ -300,6 +308,54 @@ public class WheelAddressSelector implements OnClickListener, OnWheelChangedList
 		}catch(Exception e){
 			e.printStackTrace();
 		}
+		return provinceList;
+	}
+
+	/**
+	 * DOM解析省市区的xml数据
+	 */
+	private List<ProvinceModel> domParser(InputStream input){
+		List<ProvinceModel> provinceList = new ArrayList<ProvinceModel>();
+		try {
+			//1.建立DocumentBuilderFactor，用于获得DocumentBuilder对象：
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			//2.建立DocumentBuidler：
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			//3.建立Document对象，获取树的入口：
+			Document doc = builder.parse(input);
+
+			NodeList nodeProvinceList = doc.getElementsByTagName("province");
+			for (int i = 0; nodeProvinceList != null && i < nodeProvinceList.getLength(); i++) {
+				Element provinceNode = (Element)nodeProvinceList.item(i);
+				ProvinceModel provinceModel = new ProvinceModel();
+				provinceModel.setName(provinceNode.getAttribute("name"));
+				provinceModel.setCityList(new ArrayList<CityModel>());
+
+				NodeList nodeCityList = provinceNode.getElementsByTagName("city");
+				for (int j = 0; nodeCityList != null && j < nodeCityList.getLength(); j++) {
+					Element cityNode = (Element)nodeCityList.item(j);
+					CityModel cityModel = new CityModel();
+					cityModel.setName(cityNode.getAttribute("name"));
+					cityModel.setDistrictList(new ArrayList<DistrictModel>());
+
+					NodeList nodeDistrictList = cityNode.getElementsByTagName("district");
+					for (int k = 0; nodeDistrictList != null && k < nodeDistrictList.getLength(); k++) {
+						Element districtNode = (Element) nodeDistrictList.item(k);
+						DistrictModel district = new DistrictModel();
+						district.setName(districtNode.getAttribute("name"));
+						district.setZipcode(districtNode.getAttribute("zipcode"));
+						cityModel.getDistrictList().add(district);
+					}
+					provinceModel.getCityList().add(cityModel);
+				}
+
+				provinceList.add(provinceModel);
+			}
+
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+
 		return provinceList;
 	}
 }

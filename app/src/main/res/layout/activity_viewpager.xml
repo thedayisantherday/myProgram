@@ -11,13 +11,13 @@
         android:layout_width="match_parent"
         android:layout_height="150dp"/>
 
-    <include
+    <!--<include
         layout="@layout/viewpager_banner"
         android:layout_width="match_parent"
-        android:layout_height="150dp"/>
+        android:layout_height="150dp"/>-->
 
     <!--单独提取到viewpager_banner.xml中，便于代码复用-->
-    <FrameLayout
+    <!--<FrameLayout
         android:layout_width="match_parent"
         android:layout_height="150dp" >
 
@@ -35,7 +35,7 @@
             android:layout_gravity="bottom"
             android:gravity="center_horizontal"/>
 
-    </FrameLayout>
+    </FrameLayout>-->
 
     <include layout="@layout/view_tablayout"/>
 

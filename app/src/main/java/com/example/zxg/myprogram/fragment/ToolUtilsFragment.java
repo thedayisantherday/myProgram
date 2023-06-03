@@ -2,6 +2,7 @@ package com.example.zxg.myprogram.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,8 +10,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.zxg.myprogram.R;
 import com.example.zxg.myprogram.activities.AutoClickActivity;
+import com.example.zxg.myprogram.activities.TestActivity;
 import com.example.zxg.myprogram.common.ThreeTuple;
 import com.example.zxg.myprogram.common.TupleUtil;
 import com.example.zxg.myprogram.netapi.api.LoginApi;
@@ -20,6 +23,19 @@ import com.example.zxg.myprogram.utils.NetUtils;
 import com.example.zxg.myprogram.utils.SysUtils;
 import com.example.zxg.myprogram.utils.TimeUtils;
 import com.example.zxg.myprogram.utils.XUtilsTools;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.ObservableSource;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * description ：
@@ -109,6 +125,135 @@ public class ToolUtilsFragment extends BaseFragment implements View.OnClickListe
                 ThreeTuple<String, Integer, Boolean> threeTuple = TupleUtil.tuple("test1", 1, true);
                 Toast.makeText(mActivity, "ThreeTuple.first = " + threeTuple.first + ", ThreeTuple.second = " + threeTuple.second + ", ThreeTuple.three = " + threeTuple.three, Toast.LENGTH_LONG).show();
                 break;
+            case R.id.btn_rxjava:
+                handleRxJava();
+                break;
+            case R.id.btn_image_libs:
+                handleImageLibs();
+                break;
         }
+    }
+
+    private void handleRxJava() {
+        Observable.create(new ObservableOnSubscribe<Integer>() {
+                    @Override
+                    public void subscribe(ObservableEmitter<Integer> e) throws Exception {
+                        e.onNext(1);
+                    }
+                }).flatMap(new Function<Integer, ObservableSource<String>>() {
+                    @Override
+                    public ObservableSource<String> apply(Integer integer) throws Exception {
+                        return new ObservableSource<String>() {
+                            @Override
+                            public void subscribe(Observer<? super String> observer) {
+                                observer.onNext(integer.toString());
+                            }
+                        };
+                    }
+                }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<String>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(String s) {
+                        Toast.makeText(mActivity, s, Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+
+
+        List<String> list = new ArrayList<>();
+        list.add("b");
+        list.add("a");
+        list.add("c");
+        Log.d(TAG, "zxg: 1对1:[b, a, c]-->[b, a, c]");
+        //1对1
+//                Observable.just(list)
+//                        .flatMap(
+//                                new Function<List<String>, ObservableSource<?>>() {
+//                                    @Override
+//                                    public ObservableSource<?> apply(List<String> s) throws Exception {
+////                                System.out.println("map--1----" + s);
+//                                        return Observable.fromArray(s);
+//                                    }
+//                                })
+//                        .subscribe(s -> {
+//                            Log.d(TAG, "zxg: " + s);
+//                        });
+
+//                Log.d(TAG, "zxg: 1对多:[b, a, c]-->b, a, c");
+//                //1对多
+//                Observable.just(list)
+//                        .flatMap(
+//                                new Function<List<String>, ObservableSource<?>>() {
+//                                    @Override
+//                                    public ObservableSource<?> apply(List<String> s) throws Exception {
+////                                System.out.println("map--1----" + s);
+//                                        return Observable.fromIterable(s);
+//                                    }
+//                                })
+//                        .subscribe(s -> {
+//                            Log.d(TAG, "zxg: " + s);
+//                        });
+
+        //多对多
+        Log.d(TAG, "zxg: 多对多:a, b, c-->[a, c]");
+        Observable.just("a", "b", "c")
+                .flatMap(
+                        new Function<String, ObservableSource<?>>() {
+                            @Override
+                            public ObservableSource<?> apply(String s) throws Exception {
+//                                System.out.println("map--1----" + s);
+                                if (s.equalsIgnoreCase("b")) return Observable.empty();
+                                return Observable.just(s);
+                            }
+                        })
+                .subscribe(s -> {
+                    Log.d(TAG, "zxg: " + s);
+                });
+
+        //多对多
+        Log.d(TAG, "zxg: 多对多:a, b, c-->a,b,c,d");
+        Observable.just("a", "b", "c")
+                .flatMap(
+                        new Function<String, ObservableSource<?>>() {
+                            @Override
+                            public ObservableSource<?> apply(String s) throws Exception {
+//                                System.out.println("map--1----" + s);
+                                if (s.equalsIgnoreCase("c")) return Observable.just("c", "d");
+                                return Observable.just(s);
+                            }
+                        })
+                .subscribe(s -> {
+                    Log.d(TAG, "zxg: " + s);
+                });
+        Log.d(TAG, "zxg: map 一对一:[b, a, c]-->[b, a, c]");
+        Observable.just(list)
+                .map(new Function<List<String>, List<String>>() {
+                    @Override
+                    public List<String> apply(List<String> strings) throws Exception {
+                        return strings;
+                    }
+                })
+                .subscribe(s -> {
+                    Log.d(TAG, "zxg: " + s);
+                });
+    }
+
+    private void handleImageLibs() {
+//        Glide.with(this).load("").downloadOnly();
     }
 }

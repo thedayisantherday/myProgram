@@ -9,6 +9,7 @@ import android.widget.Button;
 
 import com.example.zxg.myprogram.R;
 import com.example.zxg.myprogram.activities.AndroidH5Activity;
+import com.example.zxg.myprogram.activities.CardViewBannerActivity;
 import com.example.zxg.myprogram.activities.LoopRecyclerviewActivity;
 import com.example.zxg.myprogram.activities.MovableViewActivity;
 import com.example.zxg.myprogram.activities.MovingWithFingerActivity;
@@ -43,7 +44,8 @@ public class CustomViewFragment extends BaseFragment implements View.OnClickList
             btn_vertical_viewpager,
             btn_doubleSurfaceViewFlicker,
             btn_movable_view,
-            btn_loop_recyclerview;
+            btn_loop_recyclerview,
+            btn_cardview_banner;
 
     @Nullable
     @Override
@@ -89,6 +91,9 @@ public class CustomViewFragment extends BaseFragment implements View.OnClickList
 
         btn_loop_recyclerview = (Button) rootView.findViewById(R.id.btn_loop_recyclerview);
         btn_loop_recyclerview.setOnClickListener(this);
+
+        btn_cardview_banner = (Button) rootView.findViewById(R.id.btn_cardview_banner);
+        btn_cardview_banner.setOnClickListener(this);
     }
 
     @Override
@@ -166,6 +171,10 @@ public class CustomViewFragment extends BaseFragment implements View.OnClickList
             case R.id.btn_loop_recyclerview:
                 AnimUtils.doCustomAnim(mActivity,
                         LoopRecyclerviewActivity.class, R.anim.in_from_left, R.anim.out_to_right);
+                break;
+            case R.id.btn_cardview_banner:
+                AnimUtils.doCustomAnim(mActivity,
+                        CardViewBannerActivity.class, R.anim.in_from_left, R.anim.out_to_right);
                 break;
         }
     }

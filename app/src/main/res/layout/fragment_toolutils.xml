@@ -23,6 +23,20 @@
             android:layout_margin="10dp"
             android:text="方法返回不同对象"/>
 
+        <Button
+            android:id="@+id/btn_rxjava"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_margin="10dp"
+            android:text="RxJava"/>
+
+        <Button
+            android:id="@+id/btn_image_libs"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_margin="10dp"
+            android:text="图片框架"/>
+
     </LinearLayout>
 
     <LinearLayout

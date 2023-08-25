@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.zxg.myprogram.R;
 import com.example.zxg.myprogram.activities.AutoClickActivity;
 import com.example.zxg.myprogram.activities.TestActivity;
@@ -24,9 +25,17 @@ import com.example.zxg.myprogram.utils.SysUtils;
 import com.example.zxg.myprogram.utils.TimeUtils;
 import com.example.zxg.myprogram.utils.XUtilsTools;
 
+import org.greenrobot.eventbus.EventBus;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
+import io.reactivex.FlowableEmitter;
+import io.reactivex.FlowableOnSubscribe;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -35,6 +44,7 @@ import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
+import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -67,6 +77,8 @@ public class ToolUtilsFragment extends BaseFragment implements View.OnClickListe
 
         btn_tuple = (Button) rootView.findViewById(R.id.btn_tuple);
         btn_tuple.setOnClickListener(this);
+
+//        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -251,9 +263,101 @@ public class ToolUtilsFragment extends BaseFragment implements View.OnClickListe
                 .subscribe(s -> {
                     Log.d(TAG, "zxg: " + s);
                 });
+
+        handleFlowable();
+    }
+
+    private void handleFlowable() {
+        /**
+         * 步骤1：创建被观察者 =  Flowable
+         */
+        Flowable<Integer> upstream = Flowable.create(new FlowableOnSubscribe<Integer>() {
+            @Override
+            public void subscribe(FlowableEmitter<Integer> emitter) throws Exception {
+                emitter.onNext(1);
+                emitter.onNext(2);
+                emitter.onNext(3);
+                emitter.onComplete();
+            }
+        }, BackpressureStrategy.ERROR);
+        // 需要传入背压参数BackpressureStrategy，下面会详细讲解
+
+        /**
+         * 步骤2：创建观察者 =  Subscriber
+         */
+        Subscriber<Integer> downstream = new Subscriber<Integer>() {
+
+            @Override
+            public void onSubscribe(Subscription s) {
+                // 对比Observer传入的Disposable参数，Subscriber此处传入的参数 = Subscription
+                // 相同点：Subscription具备Disposable参数的作用，即Disposable.dispose()切断连接, 同样的调用Subscription.cancel()切断连接
+                // 不同点：Subscription增加了void request(long n)
+                Log.d(TAG, "onSubscribe");
+                s.request(Long.MAX_VALUE);
+                // 关于request()下面会继续详细说明
+            }
+
+            @Override
+            public void onNext(Integer integer) {
+                Log.d(TAG, "onNext: " + integer);
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                Log.w(TAG, "onError: ", t);
+            }
+
+            @Override
+            public void onComplete() {
+                Log.d(TAG, "onComplete");
+            }
+        };
+
+        RxJavaPlugins.setOnObservableSubscribe(((observable, observer) ->
+            new Observer() {
+                @Override
+                public void onSubscribe(Disposable d) {
+                    Log.e("Tag", "onSubscribe");
+                    observer.onSubscribe(d);
+                }
+
+                @Override
+                public void onNext(Object o) {
+                    Log.e("Tag", "onNext");
+                    observer.onNext(o);
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    Log.e("Tag", "onError");
+                    observer.onError(e);
+                }
+
+                @Override
+                public void onComplete() {
+                    Log.e("Tag", "onComplete");
+                    observer.onComplete();
+                }
+            }));
+
+        /**
+         * 步骤3：建立订阅关系
+         */
+        upstream
+            .subscribeOn(Schedulers.io()) // 设置被观察者在io线程中进行
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(downstream);
+
     }
 
     private void handleImageLibs() {
-//        Glide.with(this).load("").downloadOnly();
+//        Glide.with(this)
+//                .load("")
+//                .asBitmap()
+//                .skipMemoryCache(true)
+//                .diskCacheStrategy(DiskCacheStrategy.NONE)
+//                .centerCrop()
+//                .transform()
+//                .into();
     }
 }

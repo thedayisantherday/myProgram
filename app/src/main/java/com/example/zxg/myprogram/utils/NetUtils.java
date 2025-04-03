@@ -2,10 +2,19 @@ package com.example.zxg.myprogram.utils;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.net.LinkProperties;
+import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
+import android.net.NetworkRequest;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
+import android.os.Process;
+import android.support.annotation.NonNull;
 import android.telephony.TelephonyManager;
+import android.util.Log;
+import android.widget.Toast;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -52,8 +61,15 @@ public class NetUtils {
     public static boolean isWifiConnected(Context context) {
         ConnectivityManager connectivityManager =
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo wifiNetworkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        return wifiNetworkInfo!=null && wifiNetworkInfo.isConnected();
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            NetworkInfo wifiNetworkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            return wifiNetworkInfo!=null && wifiNetworkInfo.isConnected();
+        } else {
+            Network network = connectivityManager.getActiveNetwork();
+            if (network == null) return false;
+            NetworkCapabilities status = connectivityManager.getNetworkCapabilities(network);
+            return status != null && status.hasTransport(NetworkCapabilities.TRANSPORT_WIFI);
+        }
     }
 
     /**
@@ -65,8 +81,18 @@ public class NetUtils {
     public static boolean isMobileConnected(Context context) {
         ConnectivityManager connectivityManager =
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo mobileNetworkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-        return mobileNetworkInfo!=null && mobileNetworkInfo.isConnected();
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            NetworkInfo mMobileNetworkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+            return mMobileNetworkInfo!=null && mMobileNetworkInfo.isConnected();
+        } else {
+            Network network = connectivityManager.getActiveNetwork();
+            if (network == null) return false;
+            NetworkCapabilities status = connectivityManager.getNetworkCapabilities(network);
+            if (status != null && status.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -181,5 +207,185 @@ public class NetUtils {
         strB_IP.append((intIP >> 16) & 0xFF).append(".");
         strB_IP.append((intIP >> 24) & 0xFF);
         return strB_IP.toString();
+    }
+
+    public static void switchToWIFI(Context context) {
+        Toast.makeText(context, "切换到wifi", Toast.LENGTH_SHORT).show();
+        // 获取ConnectivityManager
+        ConnectivityManager sConnectivityManager = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        // 创建 network request，网络类型是蜂窝数据
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            NetworkRequest request = new NetworkRequest.Builder()
+                    .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+                    .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                    .build();
+            // 请求网络
+            sConnectivityManager.registerNetworkCallback(request, new ConnectivityManager.NetworkCallback() {
+
+                //网络连接成功
+                @Override
+                public void onAvailable(Network network) {
+                    Log.d("NetUtils", "网络连接成功");
+                    Toast.makeText(context, "NetUtils, 网络连接成功, isWifiConnected = " + isWifiConnected(context), Toast.LENGTH_SHORT).show();
+                    super.onAvailable(network);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        sConnectivityManager.bindProcessToNetwork(network);
+                    }
+                }
+
+                //网络已断开连接
+                @Override
+                public void onLost(Network network) {
+                    Log.d("NetUtils", "网络已断开连接");
+                    Toast.makeText(context, "NetUtils, 网络已断开连接", Toast.LENGTH_SHORT).show();
+                    super.onLost(network);
+                }
+                @Override
+                public void onLosing(Network network, int maxMsToLive) {
+                    Log.d("NetUtils", "网络正在断开连接");
+                    Toast.makeText(context, "NetUtils, 网络正在断开连接", Toast.LENGTH_SHORT).show();
+                    super.onLosing(network, maxMsToLive);
+                }
+
+                //无网络
+                @Override
+                public void onUnavailable() {
+                    Log.d("NetUtils", "网络连接超时或者网络连接不可达");
+                    Toast.makeText(context, "NetUtils, 网络连接超时或者网络连接不可达", Toast.LENGTH_SHORT).show();
+                    super.onUnavailable();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        sConnectivityManager.bindProcessToNetwork(null);
+                    }
+                }
+
+                //当网络状态修改（网络依然可用）时调用
+                @Override
+                public void onCapabilitiesChanged(Network network, NetworkCapabilities networkCapabilities) {
+                    super.onCapabilitiesChanged(network, networkCapabilities);
+                    Log.d("NetUtils", "net status change! 网络连接改变");
+                    Toast.makeText(context, "NetUtils, net status change! 网络连接改变", Toast.LENGTH_SHORT).show();
+                    // 表明此网络连接成功验证
+                    if (networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)) {
+                        if (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+                            // 使用WI-FI
+                            Log.d("NetUtils", "当前在使用WiFi上网");
+                            Toast.makeText(context, "NetUtils, 当前在使用WiFi上网", Toast.LENGTH_SHORT).show();
+                        } else if (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
+                            // 使用数据网络
+                            Log.d("NetUtils", "当前在使用数据网络上网");
+                            Toast.makeText(context, "NetUtils, 当前在使用数据网络上网", Toast.LENGTH_SHORT).show();
+                        } else{
+                            Log.d("NetUtils", "当前在使用其他网络");
+                            Toast.makeText(context, "NetUtils, 当前在使用其他网络", Toast.LENGTH_SHORT).show();
+                            // 未知网络，包括蓝牙、VPN等
+                        }
+                    }
+                }
+
+                //当网络连接属性发生变化时调用
+                @Override
+                public void onLinkPropertiesChanged(@NonNull Network network, @NonNull LinkProperties linkProperties) {
+                    super.onLinkPropertiesChanged(network, linkProperties);
+                }
+
+                //当访问的网络被阻塞或者解除阻塞时调用onCapabilitiesChanged
+                @Override
+                public void onBlockedStatusChanged(@NonNull Network network, boolean blocked) {
+                    super.onBlockedStatusChanged(network, blocked);
+                }
+            });
+        }
+    }
+
+
+    public static void switchToMobile(Context context) {
+        Toast.makeText(context, "切换到移动网络", Toast.LENGTH_SHORT).show();
+        // 获取ConnectivityManager
+        ConnectivityManager sConnectivityManager = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        // 创建 network request，网络类型是蜂窝数据
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            NetworkRequest request = new NetworkRequest.Builder()
+                    .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
+                    .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                    .build();
+            // 请求网络
+            sConnectivityManager.registerNetworkCallback(request, new ConnectivityManager.NetworkCallback() {
+
+                //网络连接成功
+                @Override
+                public void onAvailable(Network network) {
+                    Log.d("NetUtils", "网络连接成功");
+                    Toast.makeText(context, "NetUtils, 网络连接成功, isMobileConnected = " + isMobileConnected(context), Toast.LENGTH_SHORT).show();
+                    super.onAvailable(network);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        sConnectivityManager.bindProcessToNetwork(network);
+                    }
+                }
+
+                //网络已断开连接
+                @Override
+                public void onLost(Network network) {
+                    Log.d("NetUtils", "网络已断开连接");
+                    Toast.makeText(context, "NetUtils, 网络已断开连接", Toast.LENGTH_SHORT).show();
+                    super.onLost(network);
+                }
+                @Override
+                public void onLosing(Network network, int maxMsToLive) {
+                    Log.d("NetUtils", "网络正在断开连接");
+                    Toast.makeText(context, "NetUtils, 网络正在断开连接", Toast.LENGTH_SHORT).show();
+                    super.onLosing(network, maxMsToLive);
+                }
+
+                //无网络
+                @Override
+                public void onUnavailable() {
+                    Log.d("NetUtils", "网络连接超时或者网络连接不可达");
+                    Toast.makeText(context, "NetUtils, 网络连接超时或者网络连接不可达", Toast.LENGTH_SHORT).show();
+                    super.onUnavailable();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        sConnectivityManager.bindProcessToNetwork(null);
+                    }
+                }
+
+                //当网络状态修改（网络依然可用）时调用
+                @Override
+                public void onCapabilitiesChanged(Network network, NetworkCapabilities networkCapabilities) {
+                    super.onCapabilitiesChanged(network, networkCapabilities);
+                    Log.d("NetUtils", "net status change! 网络连接改变");
+                    Toast.makeText(context, "NetUtils, net status change! 网络连接改变", Toast.LENGTH_SHORT).show();
+                    // 表明此网络连接成功验证
+                    if (networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)) {
+                        if (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+                            // 使用WI-FI
+                            Log.d("NetUtils", "当前在使用WiFi上网");
+                            Toast.makeText(context, "NetUtils, 当前在使用WiFi上网", Toast.LENGTH_SHORT).show();
+                        } else if (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
+                            // 使用数据网络
+                            Log.d("NetUtils", "当前在使用数据网络上网");
+                            Toast.makeText(context, "NetUtils, 当前在使用数据网络上网", Toast.LENGTH_SHORT).show();
+                        } else{
+                            Log.d("NetUtils", "当前在使用其他网络");
+                            Toast.makeText(context, "NetUtils, 当前在使用其他网络", Toast.LENGTH_SHORT).show();
+                            // 未知网络，包括蓝牙、VPN等
+                        }
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            sConnectivityManager.bindProcessToNetwork(network);
+                        }
+                    }
+                }
+
+                //当网络连接属性发生变化时调用
+                @Override
+                public void onLinkPropertiesChanged(@NonNull Network network, @NonNull LinkProperties linkProperties) {
+                    super.onLinkPropertiesChanged(network, linkProperties);
+                }
+
+                //当访问的网络被阻塞或者解除阻塞时调用onCapabilitiesChanged
+                @Override
+                public void onBlockedStatusChanged(@NonNull Network network, boolean blocked) {
+                    super.onBlockedStatusChanged(network, blocked);
+                }
+            });
+        }
     }
 }

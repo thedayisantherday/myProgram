@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'org.jetbrains.kotlin.android'
 
 android {
     compileSdk 30
@@ -88,6 +89,5 @@ dependencies {
                     compile 'org.greenrobot:eventbus:3.0.0'*/
 
     //    compile 'com.jakewharton:butterknife:8.5.1'
-
     //    annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
 }

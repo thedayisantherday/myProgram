@@ -6,13 +6,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.example.zxg.myprogram.R;
 import com.example.zxg.myprogram.activities.AndroidH5Activity;
 import com.example.zxg.myprogram.activities.BluetoothControlActivity;
 import com.example.zxg.myprogram.activities.BluetoothScanActivity;
+import com.example.zxg.myprogram.activities.NetworkActivity;
 import com.example.zxg.myprogram.activities.TouchEventActivity;
 import com.example.zxg.myprogram.activities.WebviewActivity;
 import com.example.zxg.myprogram.utils.AnimUtils;
@@ -26,6 +25,7 @@ public class FunctionsFragment extends BaseFragment implements View.OnClickListe
     private View rootView;
     private Button btn_android_h5,
             btn_webview,
+            btn_network,
             btn_touch_event,
             btn_bluetooth_control,
             btn_bluetooth_scan;
@@ -51,6 +51,9 @@ public class FunctionsFragment extends BaseFragment implements View.OnClickListe
         btn_webview = (Button)rootView.findViewById(R.id.btn_webview);
         btn_webview.setOnClickListener(this);
 
+        btn_network = (Button)rootView.findViewById(R.id.btn_network);
+        btn_network.setOnClickListener(this);
+
         btn_touch_event = (Button) rootView.findViewById(R.id.btn_touch_event);
         btn_touch_event.setOnClickListener(this);
 
@@ -71,6 +74,10 @@ public class FunctionsFragment extends BaseFragment implements View.OnClickListe
             case R.id.btn_webview:
                 AnimUtils.doCustomAnim(mActivity,
                         WebviewActivity.class, R.anim.in_from_left, R.anim.out_to_right);
+                break;
+            case R.id.btn_network:
+                AnimUtils.doCustomAnim(mActivity,
+                        NetworkActivity.class, R.anim.in_from_left, R.anim.out_to_right);
                 break;
             case R.id.btn_touch_event:
                 AnimUtils.doCustomAnim(mActivity,

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <TextView
+        android:id="@+id/tv_test_wifi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:text="是否Wi-Fi连接："
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/tv_test_cellular"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_test_wifi"
+        android:text="是否移动网络连接："
+        tools:ignore="MissingConstraints" />
+
+    <Button
+        android:id="@+id/btn_switch_to_wifi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_test_cellular"
+        android:text="切换到Wi-Fi"
+        tools:ignore="MissingConstraints" />
+
+    <Button
+        android:id="@+id/btn_switch_to_cellular"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_switch_to_wifi"
+        android:text="切换到移动网络"
+        tools:ignore="MissingConstraints" />
+
+    <Button
+        android:id="@+id/btn_load_url"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_switch_to_cellular"
+        android:text="load url"
+        tools:ignore="MissingConstraints" />
+
+    <WebView
+        android:id="@+id/webview"
+        android:layout_width="match_parent"
+        android:layout_height="500dp"
+        app:layout_constraintTop_toBottomOf="@+id/btn_load_url" />
+
+  </android.support.constraint.ConstraintLayout>

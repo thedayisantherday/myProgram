@@ -3,10 +3,13 @@
     package="com.example.zxg.myprogram">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.NETWORK_STACK" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -30,6 +33,7 @@
         android:icon="@mipmap/app_icon"
         android:label="@string/app_name"
         android:supportsRtl="true"
+        android:requestLegacyExternalStorage="true"
         android:theme="@style/AppTheme">
         <activity android:name=".activities.CardViewBannerActivity"></activity>
         <activity android:name=".activities.SplashActivity">
@@ -48,6 +52,7 @@
         <activity android:name=".test.MainActivity" />
         <activity android:name=".activities.VerticalViewpagerActivity" />
         <activity android:name=".activities.WebviewActivity" /> <!-- shareSDK start ========================================================================= -->
+        <activity android:name=".activities.NetworkActivity" />
         <activity
             android:name="com.mob.tools.MobUIShell"
             android:configChanges="keyboardHidden|orientation|screenSize"

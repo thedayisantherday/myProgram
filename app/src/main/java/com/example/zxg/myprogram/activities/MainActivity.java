@@ -1,5 +1,6 @@
 package com.example.zxg.myprogram.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -21,6 +22,8 @@ import com.example.zxg.myprogram.fragment.ToolUtilsFragment;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import cn.sharesdk.OnekeyShareHelper;
 import cn.sharesdk.framework.ShareSDK;
 
@@ -28,8 +31,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
 
     private String TAG = MainActivity.class.getSimpleName();
     private Context mContext;
-
-    private DrawerLayout dl_drawer;
+    @SuppressLint("NonConstantResourceId")
+    @BindView(R.id.dl_drawer)
+    DrawerLayout dl_drawer;
     private LinearLayout ll_share;
     private TabLayout tl_tabs;
     private ViewPager vp_fragment;
@@ -41,11 +45,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setView(R.layout.activity_main);
-//        ButterKnife.bind(this);
+        ButterKnife.bind(this);
 
         mContext = this;
 
-        dl_drawer = findViewById(R.id.dl_drawer);
+//        dl_drawer = findViewById(R.id.dl_drawer);
         ll_share = findViewById(R.id.ll_share);
         ll_share.setOnClickListener(this);
 
